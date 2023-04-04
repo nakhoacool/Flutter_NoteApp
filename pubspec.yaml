@@ -42,6 +42,7 @@ dependencies:
   email_auth: ^1.0.0
   pinput: ^2.2.31
   flutter_svg: ^2.0.4
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:

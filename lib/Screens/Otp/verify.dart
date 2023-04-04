@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 
 class VerifyScreen extends StatefulWidget {
-  const VerifyScreen({Key? key}) : super(key: key);
+  String? data;
+  VerifyScreen({this.data, Key? key}) : super(key: key);
 
   @override
   State<VerifyScreen> createState() => _VerifyScreenState();
@@ -72,9 +73,9 @@ class _VerifyScreenState extends State<VerifyScreen> {
               const SizedBox(
                 height: 10,
               ),
-              const Text(
-                "We have sent you a 6 digit code to your email",
-                style: TextStyle(
+              Text(
+                "We have sent you a 6 digit code to your email: ${widget.data}",
+                style: const TextStyle(
                   fontSize: 16,
                 ),
                 textAlign: TextAlign.center,

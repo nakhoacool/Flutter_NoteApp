@@ -129,8 +129,8 @@ class _SignUpFormState extends State<SignUpForm> {
                       .set({
                     'user_settings': {'isVerified': false}
                   });
-                  // Navigator.pushNamedAndRemoveUntil(
-                  //     context, '/', (route) => false);
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, '/', (route) => false);
                 }).catchError((error) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

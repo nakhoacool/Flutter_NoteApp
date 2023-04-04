@@ -1,7 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import '../../../constants.dart';
@@ -96,13 +96,7 @@ class _LoginFormState extends State<LoginForm> {
                           password: _passwordController.text)
                       .then((value) {
                     // //go to /
-                    // Navigator.popUntil(context, (route) => route.isFirst);
-                    var docRef = FirebaseFirestore.instance
-                        .collection('notes')
-                        .doc(value.user!.uid);
-                    docRef.update({
-                      'user_settings': {'isVerified': true}
-                    });
+                    Navigator.popUntil(context, (route) => route.isFirst);
                   }).catchError((error) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
