@@ -1,23 +1,63 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import '../../../constants.dart';
 
-class SignUpForm extends StatelessWidget {
+class SignUpForm extends StatefulWidget {
   const SignUpForm({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  final _signUpFormKey = GlobalKey<FormState>();
+
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+
+  @override
+  void initState() {
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Form(
+      key: _signUpFormKey,
       child: Column(
         children: [
           TextFormField(
+            controller: _emailController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email';
+              }
+              if (!EmailValidator.validate(value)) {
+                return 'Please enter a valid email';
+              }
+              return null;
+            },
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.next,
             cursorColor: kPrimaryColor,
-            onSaved: (email) {},
             decoration: const InputDecoration(
               hintText: "Your email",
               prefixIcon: Padding(
@@ -29,7 +69,17 @@ class SignUpForm extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: defaultPadding),
             child: TextFormField(
-              textInputAction: TextInputAction.done,
+              controller: _passwordController,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter your password';
+                }
+                if (value.length < 6) {
+                  return 'Password must be at least 6 characters';
+                }
+                return null;
+              },
+              textInputAction: TextInputAction.next,
               obscureText: true,
               cursorColor: kPrimaryColor,
               decoration: const InputDecoration(
@@ -42,6 +92,16 @@ class SignUpForm extends StatelessWidget {
             ),
           ),
           TextFormField(
+            controller: _confirmPasswordController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your confirm password';
+              }
+              if (value != _passwordController.text) {
+                return 'Confirm password does not match';
+              }
+              return null;
+            },
             textInputAction: TextInputAction.done,
             obscureText: true,
             cursorColor: kPrimaryColor,
@@ -55,7 +115,31 @@ class SignUpForm extends StatelessWidget {
           ),
           const SizedBox(height: defaultPadding),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              if (_signUpFormKey.currentState!.validate()) {
+                //Sign up user
+                FirebaseAuth.instance
+                    .createUserWithEmailAndPassword(
+                        email: _emailController.text,
+                        password: _passwordController.text)
+                    .then((value) {
+                  FirebaseFirestore.instance
+                      .collection('notes')
+                      .doc(value.user!.uid)
+                      .set({
+                    'user_settings': {'isVerified': false}
+                  });
+                  // Navigator.pushNamedAndRemoveUntil(
+                  //     context, '/', (route) => false);
+                }).catchError((error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(error.message),
+                    ),
+                  );
+                });
+              }
+            },
             child: Text("Sign Up".toUpperCase()),
           ),
           const SizedBox(height: defaultPadding),

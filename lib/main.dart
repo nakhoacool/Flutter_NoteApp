@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'Screens/Otp/email.dart';
+import 'Screens/Otp/verify.dart';
 import 'firebase_options.dart';
 import '/Screens/Signup/signup_screen.dart';
 import '/Screens/Login/login_screen.dart';
@@ -17,12 +19,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Auth',
+      title: 'Flutter Note',
       theme: ThemeData(
           primaryColor: kPrimaryColor,
           scaffoldBackgroundColor: Colors.white,
@@ -52,6 +53,8 @@ class MyApp extends StatelessWidget {
         '/': (context) => const WelcomeScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
+        '/otp': (context) => const VerifyScreen(),
+        '/verify': (context) => const EmailScreen(),
       },
     );
   }
