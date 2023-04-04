@@ -13,6 +13,7 @@ class LoginScreen extends StatelessWidget {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Background(
         child: SingleChildScrollView(
+          reverse: true,
           child: Responsive(
             mobile: const MobileLoginScreen(),
             desktop: Row(
@@ -61,6 +62,9 @@ class MobileLoginScreen extends StatelessWidget {
             Spacer(),
           ],
         ),
+        Padding(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom)),
       ],
     );
   }
