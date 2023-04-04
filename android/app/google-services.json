@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "956692196402",
+    "project_id": "flutternoteapp-cfd1f",
+    "storage_bucket": "flutternoteapp-cfd1f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956692196402:android:7fef21e5525b694d3f602b",
+        "android_client_info": {
+          "package_name": "com.example.note_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956692196402-mrt4ljju2s0j8jl83vnqti3q4h65hmii.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.note_app",
+            "certificate_hash": "412ef1a96e4366b1414f40569c4b8f51349bbbab"
+          }
+        },
+        {
+          "client_id": "956692196402-dp8tkd9qmk023la0f1lrdsraoiv7eu1m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPYZeZVGq-I8yGicyKNMRZHXB08iil0uU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956692196402-dp8tkd9qmk023la0f1lrdsraoiv7eu1m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
