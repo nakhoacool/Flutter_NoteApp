@@ -152,7 +152,16 @@ class _SignUpFormState extends State<SignUpForm> {
                     'user_profile': {
                       'email': value.user!.email,
                       'name': _nameController.text,
-                    }
+                    },
+                    'user_notes': [
+                      {
+                        'id': DateTime.now().toString(),
+                        'title': 'Welcome to Note App',
+                        'content': 'This is your first note',
+                        'dateCreated': DateTime.now(),
+                        'dateModified': DateTime.now(),
+                      }
+                    ],
                   });
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/', (route) => false);

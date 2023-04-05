@@ -5,6 +5,7 @@ import 'firebase_options.dart';
 import '/Screens/Signup/signup_screen.dart';
 import '/Screens/Login/login_screen.dart';
 import '/constants.dart';
+import 'screens/Home/add_note.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MyAuth(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
+        '/add-note': (context) => const AddNoteScreen(),
       },
     );
   }
