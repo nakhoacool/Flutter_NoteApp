@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:get/get.dart';
 import 'package:note_app/auth.dart';
-import 'Screens/Otp/email.dart';
 import 'firebase_options.dart';
 import '/Screens/Signup/signup_screen.dart';
 import '/Screens/Login/login_screen.dart';
@@ -21,7 +19,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Note',
       theme: ThemeData(
@@ -53,7 +51,6 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MyAuth(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/verify': (context) => const EmailScreen(),
       },
     );
   }

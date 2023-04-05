@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import '/Screens/Otp/email.dart';
+import 'package:note_app/Screens/Home/home_screen.dart';
 import '/Screens/Welcome/welcome_screen.dart';
 
 class MyAuth extends StatelessWidget {
@@ -17,7 +17,7 @@ class MyAuth extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           } else if (snapshot.hasData) {
-            return const EmailScreen();
+            return const HomeScreen();
           } else if (snapshot.hasError) {
             return const Center(
               child: Text('Something went wrong'),
