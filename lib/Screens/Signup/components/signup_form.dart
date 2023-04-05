@@ -18,12 +18,14 @@ class SignUpForm extends StatefulWidget {
 class _SignUpFormState extends State<SignUpForm> {
   final _signUpFormKey = GlobalKey<FormState>();
 
+  late TextEditingController _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
   late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
+    _nameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _confirmPasswordController = TextEditingController();
@@ -32,6 +34,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -44,6 +47,25 @@ class _SignUpFormState extends State<SignUpForm> {
       key: _signUpFormKey,
       child: Column(
         children: [
+          TextFormField(
+            controller: _nameController,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your name';
+              }
+              return null;
+            },
+            textInputAction: TextInputAction.next,
+            cursorColor: kPrimaryColor,
+            decoration: const InputDecoration(
+              hintText: "Your name",
+              prefixIcon: Padding(
+                padding: EdgeInsets.all(defaultPadding),
+                child: Icon(Icons.person),
+              ),
+            ),
+          ),
+          const SizedBox(height: defaultPadding),
           TextFormField(
             controller: _emailController,
             validator: (value) {
@@ -62,7 +84,7 @@ class _SignUpFormState extends State<SignUpForm> {
               hintText: "Your email",
               prefixIcon: Padding(
                 padding: EdgeInsets.all(defaultPadding),
-                child: Icon(Icons.person),
+                child: Icon(Icons.mail),
               ),
             ),
           ),
@@ -127,7 +149,10 @@ class _SignUpFormState extends State<SignUpForm> {
                       .collection('notes')
                       .doc(value.user!.uid)
                       .set({
-                    'user_settings': {'isVerified': false}
+                    'user_profile': {
+                      'email': value.user!.email,
+                      'name': _nameController.text,
+                    }
                   });
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/', (route) => false);
