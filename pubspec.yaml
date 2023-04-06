@@ -42,6 +42,8 @@ dependencies:
   pinput: ^2.2.31
   flutter_svg: ^2.0.4
   uuid:
+  flutter_staggered_grid_view:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
