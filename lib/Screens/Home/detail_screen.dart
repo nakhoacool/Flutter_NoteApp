@@ -72,7 +72,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 'user_notes':
                     FieldValue.arrayRemove([widget.note.toFirestore()]),
               });
-              Navigator.pop(context);
+              Navigator.popUntil(context, (route) => route.isFirst);
             },
             icon: const Icon(Icons.delete),
           ),

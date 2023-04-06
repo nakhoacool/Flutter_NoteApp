@@ -1,4 +1,5 @@
 import '../../models/note.dart';
+import '/screens/home/detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -99,9 +100,21 @@ class _SearchScreenState extends State<SearchScreen> {
                           itemCount: _searchResult.length,
                           itemBuilder: (context, index) {
                             final note = _searchResult[index];
-                            return ListTile(
-                              title: Text(note.title),
-                              subtitle: Text(note.content),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => NoteDetailScreen(
+                                      note: note,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: ListTile(
+                                title: Text(note.title),
+                                subtitle: Text(note.content),
+                              ),
                             );
                           },
                         ),
