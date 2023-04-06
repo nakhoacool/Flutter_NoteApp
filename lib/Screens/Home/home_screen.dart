@@ -38,13 +38,103 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        drawer: Drawer(
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: const BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircleAvatar(
+                      radius: 30,
+                      backgroundImage: NetworkImage(
+                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        //use StreamBuilder to get user name, user email from user_profile
+                        StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('notes')
+                              .doc(_auth.currentUser!.uid)
+                              .snapshots(),
+                          builder: (context,
+                              AsyncSnapshot<DocumentSnapshot> snapshot) {
+                            if (snapshot.hasData) {
+                              final data =
+                                  snapshot.data!.data() as Map<String, dynamic>;
+                              final profile =
+                                  data['user_profile'] as Map<String, dynamic>;
+                              return Column(
+                                children: [
+                                  Text(
+                                    profile['name'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                  Text(
+                                    profile['email'],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              ListTile(
+                title: const Text('Notes'),
+                leading: const Icon(Icons.note),
+                onTap: () {
+                  Navigator.pushReplacement(context, MaterialPageRoute(
+                    builder: (context) {
+                      return const HomeScreen();
+                    },
+                  ));
+                },
+              ),
+              ListTile(
+                title: const Text('History'),
+                onTap: () {},
+              ),
+              ListTile(
+                title: const Text('Contact'),
+                onTap: () {},
+              ),
+              ListTile(
+                title: const Text('Settings'),
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
           title: const Text('Home'),
           actions: [
             //Search button
-            IconButton(onPressed: () {
-              Navigator.pushNamed(context, '/search-note');
-            }, icon: const Icon(Icons.search)),
+            IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/search-note');
+                },
+                icon: const Icon(Icons.search)),
             IconButton(
               onPressed: () {
                 setState(() {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:note_app/auth.dart';
 import 'firebase_options.dart';
-import '/Screens/Signup/signup_screen.dart';
-import '/Screens/Login/login_screen.dart';
 import '/constants.dart';
+import '/screens/Signup/signup_screen.dart';
+import '/screens/Login/login_screen.dart';
 import 'screens/Home/add_note.dart';
 import 'screens/Home/search_note.dart';
 
