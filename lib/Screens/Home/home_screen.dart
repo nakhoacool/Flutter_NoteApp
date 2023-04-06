@@ -41,6 +41,10 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: AppBar(
           title: const Text('Home'),
           actions: [
+            //Search button
+            IconButton(onPressed: () {
+              Navigator.pushNamed(context, '/search-note');
+            }, icon: const Icon(Icons.search)),
             IconButton(
               onPressed: () {
                 setState(() {
