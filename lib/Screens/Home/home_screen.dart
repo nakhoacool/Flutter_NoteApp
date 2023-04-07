@@ -16,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   bool listView = true;
-  String sortOption = 'title';
+  String sortOption = 'date';
   //   FirebaseFirestore.instance
   //     .collection('notes')
   //     .doc(value.user!.uid)
@@ -44,8 +44,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final sortOptions = [
-      {'title': 'Sort by title'},
       {'date': 'Sort by date'},
+      {'title': 'Sort by title'},
     ];
     return Scaffold(
         drawer: Drawer(
@@ -249,8 +249,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   nonTrashedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
-                    return noteA['dateModified']
-                        .compareTo(noteB['dateModified']);
+                    return noteB['dateModified']
+                        .compareTo(noteA['dateModified']);
                   });
                 }
                 return listView

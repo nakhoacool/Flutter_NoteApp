@@ -52,7 +52,7 @@ class _NoteWidgetState extends State<NoteWidget> {
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    widget.note.dateCreated.toString(),
+                    widget.note.dateModified.toString(),
                     style: const TextStyle(color: Colors.black),
                   ),
                 ),
