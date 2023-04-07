@@ -4,6 +4,7 @@ class Note {
   String id;
   String title;
   String content;
+  String contentRich;
   bool trashed;
   DateTime dateCreated;
   DateTime dateModified;
@@ -12,6 +13,7 @@ class Note {
     required this.id,
     required this.title,
     required this.content,
+    required this.contentRich,
     required this.trashed,
     required this.dateCreated,
     required this.dateModified,
@@ -22,6 +24,7 @@ class Note {
       : id = firestore['id'],
         title = firestore['title'],
         content = firestore['content'],
+        contentRich = firestore['contentRich'],
         trashed = firestore['trashed'],
         dateCreated = (firestore['dateCreated'] as Timestamp).toDate(),
         dateModified = (firestore['dateModified'] as Timestamp).toDate();
@@ -33,6 +36,7 @@ class Note {
       'id': id,
       'title': title,
       'content': content,
+      'contentRich': contentRich,
       'trashed': trashed,
       'dateCreated': dateCreated,
       'dateModified': dateModified,

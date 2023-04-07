@@ -6,6 +6,7 @@ import '/screens/Home/widgets/note_widget.dart';
 import '/screens/home/detail_screen.dart';
 import '../../models/note.dart';
 
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 

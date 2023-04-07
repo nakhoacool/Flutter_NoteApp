@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import '../../models/note.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
 class NoteDetailScreen extends StatefulWidget {
   final Note note;
@@ -12,20 +15,23 @@ class NoteDetailScreen extends StatefulWidget {
 }
 
 class _NoteDetailScreenState extends State<NoteDetailScreen> {
+  late QuillController _controller;
   late TextEditingController _titleController;
-  late TextEditingController _contentController;
 
   @override
   void initState() {
     _titleController = TextEditingController(text: widget.note.title);
-    _contentController = TextEditingController(text: widget.note.content);
+    _controller = QuillController(
+      document: Document.fromJson(jsonDecode(widget.note.contentRich)),
+      selection: const TextSelection.collapsed(offset: 0),
+    );
     super.initState();
   }
 
   @override
   void dispose() {
     _titleController.dispose();
-    _contentController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -41,7 +47,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 id: widget.note.id,
                 title: _titleController.text,
                 trashed: widget.note.trashed,
-                content: _contentController.text,
+                content: _controller.document.toPlainText(),
+                contentRich:
+                    jsonEncode(_controller.document.toDelta().toJson()),
                 dateCreated: widget.note.dateCreated,
                 dateModified: DateTime.now(),
               );
@@ -76,7 +84,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 id: widget.note.id,
                 title: _titleController.text,
                 trashed: true,
-                content: _contentController.text,
+                content: _controller.document.toPlainText(),
+                contentRich:
+                    jsonEncode(_controller.document.toDelta().toJson()),
                 dateCreated: widget.note.dateCreated,
                 dateModified: DateTime.now(),
               );
@@ -115,16 +125,24 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               maxLines: null,
             ),
             const SizedBox(height: 16),
-            TextFormField(
-              controller: _contentController,
-              textInputAction: TextInputAction.done,
-              cursorColor: Colors.blue,
-              decoration: const InputDecoration(
-                labelText: 'Content',
-                border: OutlineInputBorder(),
+            Expanded(
+              child: Column(
+                children: [
+                  QuillToolbar.basic(controller: _controller),
+                  const SizedBox(height: 16),
+                  QuillEditor(
+                    controller: _controller,
+                    scrollController: ScrollController(),
+                    scrollable: true,
+                    autoFocus: false,
+                    focusNode: FocusNode(),
+                    readOnly: false,
+                    expands: false,
+                    padding: const EdgeInsets.all(8),
+                    placeholder: 'Write something...',
+                  ),
+                ],
               ),
-              minLines: 10,
-              maxLines: null,
             ),
           ],
         ),
