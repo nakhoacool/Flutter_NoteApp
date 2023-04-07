@@ -262,8 +262,17 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/add-note');
+          onPressed: () async {
+            final messenger = ScaffoldMessenger.of(context);
+            var result = await Navigator.pushNamed(context, '/add-note');
+            if (result != null) {
+              // show snackbar add note success
+              messenger.showSnackBar(
+                const SnackBar(
+                  content: Text('Note added successfully'),
+                ),
+              );
+            }
           },
           child: const Icon(Icons.add),
         ));
@@ -285,12 +294,29 @@ class NoteListView extends StatelessWidget {
       itemBuilder: (context, index) {
         final note = notes[index] as Map<String, dynamic>;
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
+          onTap: () async {
+            final messenger = ScaffoldMessenger.of(context);
+            var result = await Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
                         NoteDetailScreen(note: Note.fromFirestore(note))));
+            if (result != null) {
+              if (result == 'update') {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text('Note updated successfully'),
+                  ),
+                );
+              }
+              if (result == 'delete') {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text('Note deleted successfully'),
+                  ),
+                );
+              }
+            }
           },
           child: NoteWidget(note: Note.fromFirestore(note)),
         );
@@ -318,12 +344,29 @@ class NoteGridView extends StatelessWidget {
         itemBuilder: (context, index) {
           final note = notes[index] as Map<String, dynamic>;
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final messenger = ScaffoldMessenger.of(context);
+              var result = await Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
                           NoteDetailScreen(note: Note.fromFirestore(note))));
+              if (result != null) {
+                if (result == 'update') {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Note updated successfully'),
+                    ),
+                  );
+                }
+                if (result == 'delete') {
+                  messenger.showSnackBar(
+                    const SnackBar(
+                      content: Text('Note deleted successfully'),
+                    ),
+                  );
+                }
+              }
             },
             child: NoteWidget(note: Note.fromFirestore(note)),
           );

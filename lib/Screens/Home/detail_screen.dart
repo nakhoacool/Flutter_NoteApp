@@ -12,7 +12,6 @@ class NoteDetailScreen extends StatefulWidget {
 }
 
 class _NoteDetailScreenState extends State<NoteDetailScreen> {
-  final _formKey = GlobalKey<FormState>();
   late TextEditingController _titleController;
   late TextEditingController _contentController;
 
@@ -38,7 +37,6 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              _formKey.currentState!.save();
               final note = Note(
                 id: widget.note.id,
                 title: _titleController.text,
@@ -60,7 +58,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   .update({
                 'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
               });
-              Navigator.pop(context);
+              Navigator.pop(context, 'update');
             },
             icon: const Icon(Icons.save),
           ),
@@ -95,40 +93,40 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   .update({
                 'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
               });
-              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pop(context, 'delete');
             },
             icon: const Icon(Icons.delete),
           ),
         ],
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _titleController,
-                textInputAction: TextInputAction.next,
-                cursorColor: Colors.blue,
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: _titleController,
+              textInputAction: TextInputAction.next,
+              cursorColor: Colors.blue,
+              decoration: const InputDecoration(
+                labelText: 'Title',
+                border: OutlineInputBorder(),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _contentController,
-                textInputAction: TextInputAction.done,
-                cursorColor: Colors.blue,
-                decoration: const InputDecoration(
-                  labelText: 'Content',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 10,
+              minLines: 3,
+              maxLines: null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _contentController,
+              textInputAction: TextInputAction.done,
+              cursorColor: Colors.blue,
+              decoration: const InputDecoration(
+                labelText: 'Content',
+                border: OutlineInputBorder(),
               ),
-            ],
-          ),
+              minLines: 10,
+              maxLines: null,
+            ),
+          ],
         ),
       ),
     );

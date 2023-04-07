@@ -12,8 +12,6 @@ class AddNoteScreen extends StatefulWidget {
 }
 
 class _AddNoteScreenState extends State<AddNoteScreen> {
-  final _addNoteFormKey = GlobalKey<FormState>();
-
   late TextEditingController _titleController;
   late TextEditingController _contentController;
 
@@ -37,71 +35,59 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       appBar: AppBar(
         title: const Text('Add Note'),
       ),
-      body: Form(
-        key: _addNoteFormKey,
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _titleController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a title';
-                }
-                return null;
-              },
-              textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
-              decoration: const InputDecoration(
-                labelText: 'Title',
-                labelStyle: TextStyle(color: kPrimaryColor),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: kPrimaryColor),
-                ),
+      body: Column(
+        children: [
+          TextFormField(
+            controller: _titleController,
+            textInputAction: TextInputAction.next,
+            cursorColor: kPrimaryColor,
+            decoration: const InputDecoration(
+              labelText: 'Title',
+              labelStyle: TextStyle(color: kPrimaryColor),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: kPrimaryColor),
               ),
             ),
-            TextFormField(
-              controller: _contentController,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter a content';
-                }
-                return null;
-              },
-              textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
-              decoration: const InputDecoration(
-                labelText: 'Content',
-                labelStyle: TextStyle(color: kPrimaryColor),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: kPrimaryColor),
-                ),
+          ),
+          TextFormField(
+            controller: _contentController,
+            textInputAction: TextInputAction.next,
+            cursorColor: kPrimaryColor,
+            decoration: const InputDecoration(
+              labelText: 'Content',
+              labelStyle: TextStyle(color: kPrimaryColor),
+              focusedBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: kPrimaryColor),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (_addNoteFormKey.currentState!.validate()) {
-                  FirebaseFirestore.instance
-                      .collection('notes')
-                      .doc(FirebaseAuth.instance.currentUser!.uid)
-                      .update({
-                    'user_notes': FieldValue.arrayUnion([
-                      {
-                        'id': const Uuid().v4(),
-                        'title': _titleController.text,
-                        'content': _contentController.text,
-                        'trashed': false,
-                        'dateCreated': DateTime.now(),
-                        'dateModified': DateTime.now(),
-                      }
-                    ]),
-                  });
-                  Navigator.pop(context);
-                }
-              },
-              child: const Text('Add Note'),
-            ),
-          ],
-        ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (_titleController.text.isEmpty &&
+                  _contentController.text.isEmpty) {
+                Navigator.pop(context);
+              } else {
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes': FieldValue.arrayUnion([
+                    {
+                      'id': const Uuid().v4(),
+                      'title': _titleController.text,
+                      'content': _contentController.text,
+                      'trashed': false,
+                      'dateCreated': DateTime.now(),
+                      'dateModified': DateTime.now(),
+                    }
+                  ]),
+                });
+                Navigator.pop(context, true);
+              }
+            },
+            child: const Text('Add Note'),
+          ),
+        ],
       ),
     );
   }
