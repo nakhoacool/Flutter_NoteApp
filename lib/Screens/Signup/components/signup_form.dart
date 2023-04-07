@@ -152,6 +152,12 @@ class _SignUpFormState extends State<SignUpForm> {
                     'user_profile': {
                       'email': value.user!.email,
                       'name': _nameController.text,
+                      'tags': [
+                        'Work',
+                        'Personal',
+                        'Shopping',
+                        'Others',
+                      ],
                     },
                     'user_notes': [
                       {

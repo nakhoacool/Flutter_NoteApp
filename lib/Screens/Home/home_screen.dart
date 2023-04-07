@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final _auth = FirebaseAuth.instance;
   bool listView = true;
+  String sortOption = 'title';
   //   FirebaseFirestore.instance
   //     .collection('notes')
   //     .doc(value.user!.uid)
@@ -23,6 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
   //   'user_profile': {
   //     'email': value.user!.email,
   //     'name': _nameController.text,
+  //      'tags': [
+  //      'Important',
+  //     'Work',
+  //    'Personal',],
   //   },
   //   'user_notes': [
   //     {
@@ -37,6 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final sortOptions = [
+      {'title': 'Sort by title'},
+      {'date': 'Sort by date'},
+    ];
     return Scaffold(
         drawer: Drawer(
           child: ListView(
@@ -102,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               ListTile(
                 title: const Text('Notes'),
-                leading: const Icon(Icons.note),
                 onTap: () {
                   Navigator.pushReplacement(context, MaterialPageRoute(
                     builder: (context) {
@@ -112,16 +120,54 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               ListTile(
-                title: const Text('History'),
+                title: const Text('Reminder'),
                 onTap: () {},
               ),
               ListTile(
-                title: const Text('Contact'),
+                title: const Text('Trash'),
                 onTap: () {},
+              ),
+              const Divider(
+                thickness: 1,
+              ),
+              StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(_auth.currentUser!.uid)
+                    .snapshots(),
+                builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                  if (snapshot.hasData) {
+                    final data = snapshot.data!.data() as Map<String, dynamic>;
+                    final profile =
+                        data['user_profile'] as Map<String, dynamic>;
+                    final tags = profile['tags'] as List<dynamic>;
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: tags.length,
+                      itemBuilder: (context, index) {
+                        final tag = tags[index] as String;
+                        return ListTile(
+                          title: Text(tag),
+                          onTap: () {},
+                        );
+                      },
+                    );
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              ),
+              const Divider(
+                thickness: 1,
               ),
               ListTile(
                 title: const Text('Settings'),
                 onTap: () {},
+              ),
+              ListTile(
+                title: const Text('Sign Out'),
+                onTap: () {
+                  _auth.signOut();
+                },
               ),
             ],
           ),
@@ -143,11 +189,35 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               icon: Icon(listView ? Icons.grid_view : Icons.list),
             ),
-            IconButton(
-              onPressed: () {
-                _auth.signOut();
+            //Sort button
+            PopupMenuButton(
+              onSelected: (value) {
+                setState(() {
+                  sortOption = value.toString(); // cast value to String
+                });
               },
-              icon: const Icon(Icons.logout),
+              itemBuilder: (context) {
+                return sortOptions
+                    .map(
+                      (option) => PopupMenuItem(
+                        value: option.keys.first.toString(),
+                        enabled: sortOption != option.keys.first.toString(),
+                        child: Row(
+                          children: [
+                            Icon(
+                              option.keys.first == 'title'
+                                  ? Icons.title
+                                  : Icons.calendar_today,
+                              color: Colors.blue,
+                            ), // icon based on key
+                            const SizedBox(width: 8),
+                            Text(option.values.first),
+                          ],
+                        ), // cast key to String
+                      ),
+                    )
+                    .toList();
+              },
             ),
           ],
         ),
@@ -160,13 +230,30 @@ class _HomeScreenState extends State<HomeScreen> {
             if (snapshot.hasData) {
               final data = snapshot.data!.data() as Map<String, dynamic>;
               final notes = data['user_notes'] as List<dynamic>;
-              return notes.isEmpty
-                  ? const Center(
-                      child: Text('Add some notes'),
-                    )
-                  : listView
-                      ? NoteListView(notes: notes)
-                      : NoteGridView(notes: notes);
+
+              if (notes.isEmpty) {
+                return const Center(
+                  child: Text('Add some notes'),
+                );
+              } else {
+                if (sortOption == 'title') {
+                  notes.sort((a, b) {
+                    final noteA = a as Map<String, dynamic>;
+                    final noteB = b as Map<String, dynamic>;
+                    return noteA['title'].compareTo(noteB['title']);
+                  });
+                } else if (sortOption == 'date') {
+                  notes.sort((a, b) {
+                    final noteA = a as Map<String, dynamic>;
+                    final noteB = b as Map<String, dynamic>;
+                    return noteA['dateModified']
+                        .compareTo(noteB['dateModified']);
+                  });
+                }
+                return listView
+                    ? NoteListView(notes: notes)
+                    : NoteGridView(notes: notes);
+              }
             }
             return const Center(child: CircularProgressIndicator());
           },
