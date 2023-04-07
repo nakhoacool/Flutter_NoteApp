@@ -42,6 +42,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               final note = Note(
                 id: widget.note.id,
                 title: _titleController.text,
+                trashed: widget.note.trashed,
                 content: _contentController.text,
                 dateCreated: widget.note.dateCreated,
                 dateModified: DateTime.now(),
@@ -65,12 +66,34 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           ),
           IconButton(
             onPressed: () {
+              // FirebaseFirestore.instance
+              //     .collection('notes')
+              //     .doc(FirebaseAuth.instance.currentUser!.uid)
+              //     .update({
+              //   'user_notes':
+              //       FieldValue.arrayRemove([widget.note.toFirestore()]),
+              // });
+              //update the trashed to true
+              final note = Note(
+                id: widget.note.id,
+                title: _titleController.text,
+                trashed: true,
+                content: _contentController.text,
+                dateCreated: widget.note.dateCreated,
+                dateModified: DateTime.now(),
+              );
               FirebaseFirestore.instance
                   .collection('notes')
                   .doc(FirebaseAuth.instance.currentUser!.uid)
                   .update({
                 'user_notes':
                     FieldValue.arrayRemove([widget.note.toFirestore()]),
+              });
+              FirebaseFirestore.instance
+                  .collection('notes')
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .update({
+                'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
               });
               Navigator.popUntil(context, (route) => route.isFirst);
             },

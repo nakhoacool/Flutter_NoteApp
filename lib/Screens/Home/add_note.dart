@@ -89,6 +89,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                         'id': const Uuid().v4(),
                         'title': _titleController.text,
                         'content': _contentController.text,
+                        'trashed': false,
                         'dateCreated': DateTime.now(),
                         'dateModified': DateTime.now(),
                       }

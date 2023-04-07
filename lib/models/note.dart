@@ -4,6 +4,7 @@ class Note {
   String id;
   String title;
   String content;
+  bool trashed;
   DateTime dateCreated;
   DateTime dateModified;
 
@@ -11,6 +12,7 @@ class Note {
     required this.id,
     required this.title,
     required this.content,
+    required this.trashed,
     required this.dateCreated,
     required this.dateModified,
   });
@@ -20,9 +22,10 @@ class Note {
       : id = firestore['id'],
         title = firestore['title'],
         content = firestore['content'],
+        trashed = firestore['trashed'],
         dateCreated = (firestore['dateCreated'] as Timestamp).toDate(),
         dateModified = (firestore['dateModified'] as Timestamp).toDate();
-        
+
   //convert to firestore
 
   Map<String, dynamic> toFirestore() {
@@ -30,6 +33,7 @@ class Note {
       'id': id,
       'title': title,
       'content': content,
+      'trashed': trashed,
       'dateCreated': dateCreated,
       'dateModified': dateModified,
     };

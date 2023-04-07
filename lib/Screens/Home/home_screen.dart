@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //       'id': DateTime.now().toString(),
   //       'title': 'Welcome to Note App',
   //       'content': 'This is your first note',
+  //        'trashed': 'false',
   //       'dateCreated': DateTime.now(),
   //       'dateModified': DateTime.now(),
   //     }
@@ -230,20 +231,22 @@ class _HomeScreenState extends State<HomeScreen> {
             if (snapshot.hasData) {
               final data = snapshot.data!.data() as Map<String, dynamic>;
               final notes = data['user_notes'] as List<dynamic>;
+              final nonTrashedNotes =
+                  notes.where((note) => note['trashed'] == false).toList();
 
-              if (notes.isEmpty) {
+              if (nonTrashedNotes.isEmpty) {
                 return const Center(
                   child: Text('Add some notes'),
                 );
               } else {
                 if (sortOption == 'title') {
-                  notes.sort((a, b) {
+                  nonTrashedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
                     return noteA['title'].compareTo(noteB['title']);
                   });
                 } else if (sortOption == 'date') {
-                  notes.sort((a, b) {
+                  nonTrashedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
                     return noteA['dateModified']
@@ -251,8 +254,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }
                 return listView
-                    ? NoteListView(notes: notes)
-                    : NoteGridView(notes: notes);
+                    ? NoteListView(notes: nonTrashedNotes)
+                    : NoteGridView(notes: nonTrashedNotes);
               }
             }
             return const Center(child: CircularProgressIndicator());

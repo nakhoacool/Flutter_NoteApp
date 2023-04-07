@@ -164,6 +164,7 @@ class _SignUpFormState extends State<SignUpForm> {
                         'id': DateTime.now().toString(),
                         'title': 'Welcome to Note App',
                         'content': 'This is your first note',
+                        'trashed': false,
                         'dateCreated': DateTime.now(),
                         'dateModified': DateTime.now(),
                       }
