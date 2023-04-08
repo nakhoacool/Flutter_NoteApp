@@ -45,7 +45,7 @@ class _TrashScreenState extends State<TrashScreen> {
   // });
 
   // get all notes that are trashed is true
-
+  @override
   Widget build(BuildContext context) {
     final sortOptions = [
       {'date': 'Sort by date'},
@@ -174,6 +174,7 @@ class _TrashScreenState extends State<TrashScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Sign Out'),
               onTap: () {
+                Navigator.pushReplacementNamed(context, '/login');
                 _auth.signOut();
               },
             ),
