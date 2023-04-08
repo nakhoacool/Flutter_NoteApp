@@ -15,29 +15,6 @@ class _TrashScreenState extends State<TrashScreen> {
   final _auth = FirebaseAuth.instance;
   bool listView = true;
   String sortOption = 'date';
-  //   FirebaseFirestore.instance
-  //     .collection('notes')
-  //     .doc(value.user!.uid)
-  //     .set({
-  //   'user_profile': {
-  //     'email': value.user!.email,
-  //     'name': _nameController.text,
-  //      'tags': [
-  //      'Important',
-  //     'Work',
-  //    'Personal',],
-  //   },
-  //   'user_notes': [
-  //     {
-  //       'id': DateTime.now().toString(),
-  //       'title': 'Welcome to Note App',
-  //       'content': 'This is your first note',
-  //        'trashed': false,
-  //       'dateCreated': DateTime.now(),
-  //       'dateModified': DateTime.now(),
-  //     }
-  //   ],
-  // });
 
   // get all notes that are trashed is true
   @override

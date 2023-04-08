@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/note.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -154,6 +156,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         child: Column(
           children: [
             TextField(
+              readOnly: widget.title == 'Trash' ? true : false,
               controller: _titleController,
               textInputAction: TextInputAction.next,
               decoration: const InputDecoration(
@@ -181,7 +184,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     scrollable: true,
                     autoFocus: false,
                     focusNode: FocusNode(),
-                    readOnly: false,
+                    readOnly: widget.title == 'Trash' ? true : false,
+                    showCursor: widget.title == 'Trash' ? false : true,
                     expands: false,
                     padding: const EdgeInsets.all(16),
                     placeholder: 'Write something...',
