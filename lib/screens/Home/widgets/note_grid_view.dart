@@ -8,9 +8,11 @@ class NoteGridView extends StatelessWidget {
   const NoteGridView({
     super.key,
     required this.notes,
+    required this.title,
   });
 
   final List notes;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +30,8 @@ class NoteGridView extends StatelessWidget {
               var result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          NoteDetailScreen(note: Note.fromFirestore(note))));
+                      builder: (context) => NoteDetailScreen(
+                          note: Note.fromFirestore(note), title: title)));
               if (result != null) {
                 if (result == 'update') {
                   messenger.showSnackBar(

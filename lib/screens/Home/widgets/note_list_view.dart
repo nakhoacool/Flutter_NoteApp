@@ -3,14 +3,15 @@ import '../../../models/note.dart';
 import '../detail_screen.dart';
 import 'note_widget.dart';
 
-
 class NoteListView extends StatelessWidget {
   const NoteListView({
     super.key,
     required this.notes,
+    required this.title,
   });
 
   final List notes;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
@@ -24,8 +25,8 @@ class NoteListView extends StatelessWidget {
             var result = await Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        NoteDetailScreen(note: Note.fromFirestore(note))));
+                    builder: (context) => NoteDetailScreen(
+                        note: Note.fromFirestore(note), title: title)));
             if (result != null) {
               if (result == 'update') {
                 messenger.showSnackBar(

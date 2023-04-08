@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:note_app/Screens/Home/home_screen.dart';
-import '/Screens/Welcome/welcome_screen.dart';
+import '../screens/Home/home_screen.dart';
+import '../screens/Welcome/welcome_screen.dart';
+
 
 class MyAuth extends StatelessWidget {
   const MyAuth({super.key});

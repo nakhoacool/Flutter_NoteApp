@@ -8,7 +8,9 @@ import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
 class NoteDetailScreen extends StatefulWidget {
   final Note note;
-  const NoteDetailScreen({Key? key, required this.note}) : super(key: key);
+  final String title;
+  const NoteDetailScreen({Key? key, required this.note, required this.title})
+      : super(key: key);
 
   @override
   State<NoteDetailScreen> createState() => _NoteDetailScreenState();
@@ -41,72 +43,110 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       appBar: AppBar(
         title: const Text('Note Detail'),
         actions: [
-          IconButton(
-            onPressed: () {
-              final note = Note(
-                id: widget.note.id,
-                title: _titleController.text,
-                trashed: widget.note.trashed,
-                content: _controller.document.toPlainText(),
-                contentRich:
-                    jsonEncode(_controller.document.toDelta().toJson()),
-                dateCreated: widget.note.dateCreated,
-                dateModified: DateTime.now(),
-              );
-              FirebaseFirestore.instance
-                  .collection('notes')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .update({
-                'user_notes':
-                    FieldValue.arrayRemove([widget.note.toFirestore()]),
-              });
-              FirebaseFirestore.instance
-                  .collection('notes')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .update({
-                'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
-              });
-              Navigator.pop(context, 'update');
-            },
-            icon: const Icon(Icons.save),
-          ),
-          IconButton(
-            onPressed: () {
-              // FirebaseFirestore.instance
-              //     .collection('notes')
-              //     .doc(FirebaseAuth.instance.currentUser!.uid)
-              //     .update({
-              //   'user_notes':
-              //       FieldValue.arrayRemove([widget.note.toFirestore()]),
-              // });
-              //update the trashed to true
-              final note = Note(
-                id: widget.note.id,
-                title: _titleController.text,
-                trashed: true,
-                content: _controller.document.toPlainText(),
-                contentRich:
-                    jsonEncode(_controller.document.toDelta().toJson()),
-                dateCreated: widget.note.dateCreated,
-                dateModified: DateTime.now(),
-              );
-              FirebaseFirestore.instance
-                  .collection('notes')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .update({
-                'user_notes':
-                    FieldValue.arrayRemove([widget.note.toFirestore()]),
-              });
-              FirebaseFirestore.instance
-                  .collection('notes')
-                  .doc(FirebaseAuth.instance.currentUser!.uid)
-                  .update({
-                'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
-              });
-              Navigator.pop(context, 'delete');
-            },
-            icon: const Icon(Icons.delete),
-          ),
+          if (widget.title == 'Trash') ...[
+            IconButton(
+              onPressed: () {
+                final note = Note(
+                  id: widget.note.id,
+                  title: _titleController.text,
+                  trashed: false,
+                  content: _controller.document.toPlainText(),
+                  contentRich:
+                      jsonEncode(_controller.document.toDelta().toJson()),
+                  dateCreated: widget.note.dateCreated,
+                  dateModified: DateTime.now(),
+                );
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes':
+                      FieldValue.arrayRemove([widget.note.toFirestore()]),
+                });
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
+                });
+                Navigator.pop(context, 'update');
+              },
+              icon: const Icon(Icons.restore),
+            ),
+            IconButton(
+              onPressed: () {
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes':
+                      FieldValue.arrayRemove([widget.note.toFirestore()]),
+                });
+                Navigator.pop(context, 'delete');
+              },
+              icon: const Icon(Icons.delete),
+            ),
+          ] else ...[
+            IconButton(
+              onPressed: () {
+                final note = Note(
+                  id: widget.note.id,
+                  title: _titleController.text,
+                  trashed: widget.note.trashed,
+                  content: _controller.document.toPlainText(),
+                  contentRich:
+                      jsonEncode(_controller.document.toDelta().toJson()),
+                  dateCreated: widget.note.dateCreated,
+                  dateModified: DateTime.now(),
+                );
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes':
+                      FieldValue.arrayRemove([widget.note.toFirestore()]),
+                });
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
+                });
+                Navigator.pop(context, 'update');
+              },
+              icon: const Icon(Icons.save),
+            ),
+            IconButton(
+              onPressed: () {
+                //update the trashed to true
+                final note = Note(
+                  id: widget.note.id,
+                  title: _titleController.text,
+                  trashed: true,
+                  content: _controller.document.toPlainText(),
+                  contentRich:
+                      jsonEncode(_controller.document.toDelta().toJson()),
+                  dateCreated: widget.note.dateCreated,
+                  dateModified: DateTime.now(),
+                );
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes':
+                      FieldValue.arrayRemove([widget.note.toFirestore()]),
+                });
+                FirebaseFirestore.instance
+                    .collection('notes')
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .update({
+                  'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
+                });
+                Navigator.pop(context, 'delete');
+              },
+              icon: const Icon(Icons.delete),
+            ),
+          ],
         ],
       ),
       body: Padding(

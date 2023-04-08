@@ -256,8 +256,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 }
                 return listView
-                    ? NoteListView(notes: nonTrashedNotes)
-                    : NoteGridView(notes: nonTrashedNotes);
+                    ? NoteListView(
+                        notes: nonTrashedNotes,
+                        title: 'Home',
+                      )
+                    : NoteGridView(
+                        notes: nonTrashedNotes,
+                        title: 'Home',
+                      );
               }
             }
             return const Center(child: CircularProgressIndicator());

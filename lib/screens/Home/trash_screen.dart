@@ -1,11 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
-import '/screens/Home/widgets/note_widget.dart';
-import '/screens/home/detail_screen.dart';
-import '../../models/note.dart';
-import 'home_screen.dart';
 import 'widgets/note_grid_view.dart';
 import 'widgets/note_list_view.dart';
 
@@ -233,30 +228,36 @@ class _TrashScreenState extends State<TrashScreen> {
           if (snapshot.hasData) {
             final data = snapshot.data!.data() as Map<String, dynamic>;
             final notes = data['user_notes'] as List<dynamic>;
-            final nonTrashedNotes =
+            final trashedNotes =
                 notes.where((note) => note['trashed'] == true).toList();
 
-            if (nonTrashedNotes.isEmpty) {
+            if (trashedNotes.isEmpty) {
               return const Center(
                 child: Text('There is no deleted notes'),
               );
             } else {
               if (sortOption == 'title') {
-                nonTrashedNotes.sort((a, b) {
+                trashedNotes.sort((a, b) {
                   final noteA = a as Map<String, dynamic>;
                   final noteB = b as Map<String, dynamic>;
                   return noteA['title'].compareTo(noteB['title']);
                 });
               } else if (sortOption == 'date') {
-                nonTrashedNotes.sort((a, b) {
+                trashedNotes.sort((a, b) {
                   final noteA = a as Map<String, dynamic>;
                   final noteB = b as Map<String, dynamic>;
                   return noteB['dateModified'].compareTo(noteA['dateModified']);
                 });
               }
               return listView
-                  ? NoteListView(notes: nonTrashedNotes)
-                  : NoteGridView(notes: nonTrashedNotes);
+                  ? NoteListView(
+                      notes: trashedNotes,
+                      title: 'Trash',
+                    )
+                  : NoteGridView(
+                      notes: trashedNotes,
+                      title: 'Trash',
+                    );
             }
           }
           return const Center(child: CircularProgressIndicator());

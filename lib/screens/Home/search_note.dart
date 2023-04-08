@@ -1,8 +1,9 @@
 import '../../models/note.dart';
-import '/screens/home/detail_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import 'detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -109,6 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   MaterialPageRoute(
                                     builder: (context) => NoteDetailScreen(
                                       note: note,
+                                      title: 'Search'
                                     ),
                                   ),
                                 );
