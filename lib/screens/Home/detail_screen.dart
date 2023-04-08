@@ -69,7 +69,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     .update({
                   'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
                 });
-                Navigator.pop(context, 'update');
+                Navigator.pop(context, 'restore');
               },
               icon: const Icon(Icons.restore),
             ),

@@ -33,20 +33,11 @@ class NoteGridView extends StatelessWidget {
                       builder: (context) => NoteDetailScreen(
                           note: Note.fromFirestore(note), title: title)));
               if (result != null) {
-                if (result == 'update') {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Note updated successfully'),
-                    ),
-                  );
-                }
-                if (result == 'delete') {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Note deleted successfully'),
-                    ),
-                  );
-                }
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text('Note $result successfully'),
+                  ),
+                );
               }
             },
             child: NoteWidget(note: Note.fromFirestore(note)),
