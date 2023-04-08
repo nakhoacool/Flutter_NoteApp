@@ -81,8 +81,10 @@ class _SearchScreenState extends State<SearchScreen> {
                   child: TextField(
                     controller: _searchController,
                     decoration: const InputDecoration(
+                      filled: true,
+                      fillColor: Colors.white,
                       hintText: 'Search',
-                      border: OutlineInputBorder(),
+                      border: InputBorder.none,
                       suffixIcon: Icon(Icons.search),
                     ),
                     onChanged: (value) {

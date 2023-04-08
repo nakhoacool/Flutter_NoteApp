@@ -6,7 +6,9 @@ import '/constants.dart';
 import '/screens/Signup/signup_screen.dart';
 import '/screens/Login/login_screen.dart';
 import 'screens/Home/add_note.dart';
+import 'screens/Home/home_screen.dart';
 import 'screens/Home/search_note.dart';
+import 'screens/Home/trash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,8 +55,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MyAuth(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
+        '/home': (context) => const HomeScreen(),
         '/add-note': (context) => const AddNoteScreen(),
         '/search-note': (context) => const SearchScreen(),
+        '/trash':(context) => const TrashScreen(),
       },
     );
   }

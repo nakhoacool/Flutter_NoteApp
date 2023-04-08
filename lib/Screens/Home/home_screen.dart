@@ -1,11 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
-import '/screens/Home/widgets/note_widget.dart';
-import '/screens/home/detail_screen.dart';
-import '../../models/note.dart';
-
+import '/screens/Home/widgets/note_grid_view.dart';
+import '/screens/Home/widgets/note_list_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -35,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //       'id': DateTime.now().toString(),
   //       'title': 'Welcome to Note App',
   //       'content': 'This is your first note',
-  //        'trashed': 'false',
+  //        'trashed': false,
   //       'dateCreated': DateTime.now(),
   //       'dateModified': DateTime.now(),
   //     }
@@ -112,22 +109,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ListTile(
+                leading: const Icon(Icons.note),
                 title: const Text('Notes'),
                 onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(
-                    builder: (context) {
-                      return const HomeScreen();
-                    },
-                  ));
+                  Navigator.pop(context);
                 },
               ),
               ListTile(
+                leading: const Icon(Icons.alarm),
                 title: const Text('Reminder'),
                 onTap: () {},
               ),
               ListTile(
+                leading: const Icon(Icons.delete),
                 title: const Text('Trash'),
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/trash');
+                },
               ),
               const Divider(
                 thickness: 1,
@@ -149,6 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         final tag = tags[index] as String;
                         return ListTile(
+                          leading: const Icon(Icons.label),
                           title: Text(tag),
                           onTap: () {},
                         );
@@ -162,10 +161,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 thickness: 1,
               ),
               ListTile(
+                leading: const Icon(Icons.settings),
                 title: const Text('Settings'),
                 onTap: () {},
               ),
               ListTile(
+                leading: const Icon(Icons.logout),
                 title: const Text('Sign Out'),
                 onTap: () {
                   _auth.signOut();
@@ -277,100 +278,5 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           child: const Icon(Icons.add),
         ));
-  }
-}
-
-class NoteListView extends StatelessWidget {
-  const NoteListView({
-    super.key,
-    required this.notes,
-  });
-
-  final List notes;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: notes.length,
-      itemBuilder: (context, index) {
-        final note = notes[index] as Map<String, dynamic>;
-        return GestureDetector(
-          onTap: () async {
-            final messenger = ScaffoldMessenger.of(context);
-            var result = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        NoteDetailScreen(note: Note.fromFirestore(note))));
-            if (result != null) {
-              if (result == 'update') {
-                messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text('Note updated successfully'),
-                  ),
-                );
-              }
-              if (result == 'delete') {
-                messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text('Note deleted successfully'),
-                  ),
-                );
-              }
-            }
-          },
-          child: NoteWidget(note: Note.fromFirestore(note)),
-        );
-      },
-    );
-  }
-}
-
-class NoteGridView extends StatelessWidget {
-  const NoteGridView({
-    super.key,
-    required this.notes,
-  });
-
-  final List notes;
-
-  @override
-  Widget build(BuildContext context) {
-    return MasonryGridView.count(
-        crossAxisCount: 2,
-        mainAxisSpacing: 4,
-        crossAxisSpacing: 4,
-        scrollDirection: Axis.vertical,
-        itemCount: notes.length,
-        itemBuilder: (context, index) {
-          final note = notes[index] as Map<String, dynamic>;
-          return GestureDetector(
-            onTap: () async {
-              final messenger = ScaffoldMessenger.of(context);
-              var result = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          NoteDetailScreen(note: Note.fromFirestore(note))));
-              if (result != null) {
-                if (result == 'update') {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Note updated successfully'),
-                    ),
-                  );
-                }
-                if (result == 'delete') {
-                  messenger.showSnackBar(
-                    const SnackBar(
-                      content: Text('Note deleted successfully'),
-                    ),
-                  );
-                }
-              }
-            },
-            child: NoteWidget(note: Note.fromFirestore(note)),
-          );
-        });
   }
 }
