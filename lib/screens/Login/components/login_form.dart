@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
-import '../../../constants.dart';
+import '../../../components/constants.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({

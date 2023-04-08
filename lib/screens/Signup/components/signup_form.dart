@@ -4,7 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
-import '../../../constants.dart';
+import '../../../components/constants.dart';
 
 class SignUpForm extends StatefulWidget {
   const SignUpForm({

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:note_app/auth.dart';
+import 'package:note_app/utils/auth.dart';
+import 'package:url_strategy/url_strategy.dart';
+import 'utils/auth_guard.dart';
 import 'firebase_options.dart';
-import '/constants.dart';
+import 'components/constants.dart';
 import '/screens/Signup/signup_screen.dart';
 import '/screens/Login/login_screen.dart';
 import 'screens/Home/add_note.dart';
@@ -15,6 +17,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  setPathUrlStrategy();
   runApp(const MyApp());
 }
 
@@ -55,10 +58,42 @@ class MyApp extends StatelessWidget {
         '/': (context) => const MyAuth(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignUpScreen(),
-        '/home': (context) => const HomeScreen(),
-        '/add-note': (context) => const AddNoteScreen(),
-        '/search-note': (context) => const SearchScreen(),
-        '/trash':(context) => const TrashScreen(),
+      },
+      onGenerateRoute: (settings) {
+        // Check if the user is authenticated before allowing access to certain routes.
+        if (settings.name == '/home' ||
+            settings.name == '/add-note' ||
+            settings.name == '/search-note' ||
+            settings.name == '/trash') {
+          return MaterialPageRoute(builder: (context) {
+            return FutureBuilder<bool>(
+              future: AuthGuard.isAuthenticated(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!) {
+                  // User is authenticated, allow access to the route.
+                  switch (settings.name) {
+                    case '/home':
+                      return const HomeScreen();
+                    case '/add-note':
+                      return const AddNoteScreen();
+                    case '/search-note':
+                      return const SearchScreen();
+                    case '/trash':
+                      return const TrashScreen();
+                    default:
+                      return Container(); // Replace this with an error message or a 404 page if desired.
+                  }
+                } else {
+                  // User is not authenticated, redirect to the login screen.
+                  return const LoginScreen();
+                }
+              },
+            );
+          });
+        }
+        // If the requested route is not in the list of routes that require authentication,
+        // just return null to use the default route handling.
+        return null;
       },
     );
   }

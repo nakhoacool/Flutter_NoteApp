@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '/constants.dart';
-import '/responsive.dart';
+import '../../components/constants.dart';
+import '../../components/responsive.dart';
 import '../../components/background.dart';
 import 'components/sign_up_top_image.dart';
 import 'components/signup_form.dart';

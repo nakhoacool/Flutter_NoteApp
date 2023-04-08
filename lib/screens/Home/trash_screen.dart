@@ -174,7 +174,7 @@ class _TrashScreenState extends State<TrashScreen> {
               leading: const Icon(Icons.logout),
               title: const Text('Sign Out'),
               onTap: () {
-                Navigator.pushReplacementNamed(context, '/login');
+                Navigator.pushReplacementNamed(context, '/');
                 _auth.signOut();
               },
             ),

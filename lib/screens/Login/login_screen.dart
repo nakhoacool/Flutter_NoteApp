@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '/responsive.dart';
+import '../../components/responsive.dart';
 import '../../components/background.dart';
 import 'components/login_form.dart';
 import 'components/login_screen_top_image.dart';
