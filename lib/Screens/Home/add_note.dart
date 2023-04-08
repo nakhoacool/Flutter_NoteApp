@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
-import '../../constants.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
 class AddNoteScreen extends StatefulWidget {
@@ -71,20 +70,21 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            TextFormField(
+            TextField(
               controller: _titleController,
               textInputAction: TextInputAction.next,
-              cursorColor: kPrimaryColor,
               decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Title',
+                border: InputBorder.none,
               ),
+              minLines: 1,
+              maxLines: null,
             ),
-            const SizedBox(height: 8),
             const Divider(
               thickness: 2,
             ),
-            const SizedBox(height: 8),
             Expanded(
               child: Column(
                 children: [
@@ -100,7 +100,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                     focusNode: FocusNode(),
                     readOnly: false,
                     expands: false,
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(18),
                     placeholder: 'Write something...',
                   ),
                 ],

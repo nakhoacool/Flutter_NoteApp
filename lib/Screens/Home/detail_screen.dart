@@ -113,23 +113,28 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            TextFormField(
+            TextField(
               controller: _titleController,
               textInputAction: TextInputAction.next,
-              cursorColor: Colors.blue,
               decoration: const InputDecoration(
-                labelText: 'Title',
-                border: OutlineInputBorder(),
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Title',
+                border: InputBorder.none,
               ),
-              minLines: 3,
+              minLines: 1,
               maxLines: null,
             ),
-            const SizedBox(height: 16),
+            const Divider(
+              thickness: 2,
+            ),
             Expanded(
               child: Column(
                 children: [
                   QuillToolbar.basic(controller: _controller),
-                  const SizedBox(height: 16),
+                  const Divider(
+                    thickness: 2,
+                  ),
                   QuillEditor(
                     controller: _controller,
                     scrollController: ScrollController(),
@@ -138,7 +143,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     focusNode: FocusNode(),
                     readOnly: false,
                     expands: false,
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(16),
                     placeholder: 'Write something...',
                   ),
                 ],
