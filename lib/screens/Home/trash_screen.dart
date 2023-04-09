@@ -219,7 +219,10 @@ class _TrashScreenState extends State<TrashScreen> {
                 trashedNotes.sort((a, b) {
                   final noteA = a as Map<String, dynamic>;
                   final noteB = b as Map<String, dynamic>;
-                  return noteA['title'].compareTo(noteB['title']);
+                  return noteA['title']
+                      .toString()
+                      .toLowerCase()
+                      .compareTo(noteB['title'].toString().toLowerCase());
                 });
               } else if (sortOption == 'date') {
                 trashedNotes.sort((a, b) {

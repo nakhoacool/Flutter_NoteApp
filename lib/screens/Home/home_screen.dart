@@ -255,12 +255,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   nonPinnedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
-                    return noteA['title'].compareTo(noteB['title']);
+                    return noteA['title']
+                        .toString()
+                        .toLowerCase()
+                        .compareTo(noteB['title'].toString().toLowerCase());
                   });
                   pinnedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
-                    return noteA['title'].compareTo(noteB['title']);
+                    return noteA['title']
+                        .toString()
+                        .toLowerCase()
+                        .compareTo(noteB['title'].toString().toLowerCase());
                   });
                 } else if (sortOption == 'date') {
                   nonPinnedNotes.sort((a, b) {
