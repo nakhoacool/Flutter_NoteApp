@@ -17,6 +17,8 @@ class NoteGridView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MasonryGridView.count(
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
         crossAxisCount: 2,
         mainAxisSpacing: 4,
         crossAxisSpacing: 4,

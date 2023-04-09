@@ -16,6 +16,8 @@ class NoteListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       itemCount: notes.length,
       itemBuilder: (context, index) {
         final note = notes[index] as Map<String, dynamic>;

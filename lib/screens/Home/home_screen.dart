@@ -276,36 +276,50 @@ class _HomeScreenState extends State<HomeScreen> {
                         .compareTo(noteA['dateModified']);
                   });
                 }
-                // return listView
-                //     ? NoteListView(
-                //         notes: nonTrashedNotes,
-                //         title: 'Home',
-                //       )
-                //     : NoteGridView(
-                //         notes: nonTrashedNotes,
-                //         title: 'Home',
-                //       );
-
-                //convert the code above into two sections one for pinned notes and one for non pinned notes
-                return Column(
+                return ListView(
                   children: [
                     if (pinnedNotes.isNotEmpty)
-                      Flexible(
-                        child: NoteListView(
-                          notes: pinnedNotes,
-                          title: 'Pinned',
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Pinned',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      )
-                    else
-                      const SizedBox(),
-                    nonPinnedNotes.isNotEmpty
-                        ? Flexible(
-                            child: NoteListView(
+                      ),
+                    if (pinnedNotes.isNotEmpty)
+                      listView
+                          ? NoteListView(
+                              notes: pinnedNotes,
+                              title: 'Home',
+                            )
+                          : NoteGridView(
+                              notes: pinnedNotes,
+                              title: 'Home',
+                            ),
+                    if (nonPinnedNotes.isNotEmpty)
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Text(
+                          'Others',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    if (nonPinnedNotes.isNotEmpty)
+                      listView
+                          ? NoteListView(
+                              notes: nonPinnedNotes,
+                              title: 'Home',
+                            )
+                          : NoteGridView(
                               notes: nonPinnedNotes,
                               title: 'Home',
                             ),
-                          )
-                        : const SizedBox(),
                   ],
                 );
               }
