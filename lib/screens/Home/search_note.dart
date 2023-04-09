@@ -57,8 +57,9 @@ class _SearchScreenState extends State<SearchScreen> {
       final titleLower = element.title.toLowerCase();
       final contentLower = element.content.toLowerCase();
       final searchLower = search.toLowerCase();
-      return titleLower.contains(searchLower) ||
-          contentLower.contains(searchLower);
+      return !element.trashed &&
+          (titleLower.contains(searchLower) ||
+              contentLower.contains(searchLower));
     }).toList();
     setState(() {
       _searchResult = result;
@@ -109,9 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => NoteDetailScreen(
-                                      note: note,
-                                      title: 'Search'
-                                    ),
+                                        note: note, title: 'Search'),
                                   ),
                                 );
                               },

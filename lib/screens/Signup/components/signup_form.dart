@@ -159,16 +159,6 @@ class _SignUpFormState extends State<SignUpForm> {
                         'Others',
                       ],
                     },
-                    'user_notes': [
-                      {
-                        'id': DateTime.now().toString(),
-                        'title': 'Welcome to Note App',
-                        'content': 'This is your first note',
-                        'trashed': false,
-                        'dateCreated': DateTime.now(),
-                        'dateModified': DateTime.now(),
-                      }
-                    ],
                   });
                   Navigator.pushNamedAndRemoveUntil(
                       context, '/', (route) => false);
