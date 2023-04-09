@@ -11,7 +11,7 @@ import firebase_auth
 import firebase_core
 import firebase_storage
 import pasteboard
-import shared_preferences_foundation
+import shared_preferences_macos
 import smart_auth
 import url_launcher_macos
 
