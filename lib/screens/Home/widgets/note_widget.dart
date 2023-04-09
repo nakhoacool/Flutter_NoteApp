@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note_app/models/note.dart';
+import 'package:intl/intl.dart';
 
 class NoteWidget extends StatefulWidget {
   final Note note;
@@ -56,7 +57,8 @@ class _NoteWidgetState extends State<NoteWidget> {
                 Container(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    widget.note.dateModified.toString(),
+                    DateFormat('dd-MM-yyyy – kk:mm')
+                        .format(widget.note.dateModified),
                     style: const TextStyle(color: Colors.black),
                   ),
                 ),
