@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //       'title': 'Welcome to Note App',
   //       'content': 'This is your first note',
   //        'trashed': false,
+  //        'pinned': false,
   //       'dateCreated': DateTime.now(),
   //       'dateModified': DateTime.now(),
   //     }
@@ -232,38 +233,81 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.hasData) {
               final data = snapshot.data!.data() as Map<String, dynamic>;
-              final notes = data['user_notes'] as List<dynamic>;
+              final notes = data.containsKey('user_notes')
+                  ? data['user_notes'] as List<dynamic>
+                  : [];
+
               final nonTrashedNotes =
                   notes.where((note) => note['trashed'] == false).toList();
+              final pinnedNotes = nonTrashedNotes
+                  .where((note) => note['pinned'] == true)
+                  .toList();
+              final nonPinnedNotes = nonTrashedNotes
+                  .where((note) => note['pinned'] == false)
+                  .toList();
 
-              if (nonTrashedNotes.isEmpty) {
+              if (nonPinnedNotes.isEmpty && pinnedNotes.isEmpty) {
                 return const Center(
                   child: Text('Add some notes'),
                 );
               } else {
                 if (sortOption == 'title') {
-                  nonTrashedNotes.sort((a, b) {
+                  nonPinnedNotes.sort((a, b) {
+                    final noteA = a as Map<String, dynamic>;
+                    final noteB = b as Map<String, dynamic>;
+                    return noteA['title'].compareTo(noteB['title']);
+                  });
+                  pinnedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
                     return noteA['title'].compareTo(noteB['title']);
                   });
                 } else if (sortOption == 'date') {
-                  nonTrashedNotes.sort((a, b) {
+                  nonPinnedNotes.sort((a, b) {
+                    final noteA = a as Map<String, dynamic>;
+                    final noteB = b as Map<String, dynamic>;
+                    return noteB['dateModified']
+                        .compareTo(noteA['dateModified']);
+                  });
+                  pinnedNotes.sort((a, b) {
                     final noteA = a as Map<String, dynamic>;
                     final noteB = b as Map<String, dynamic>;
                     return noteB['dateModified']
                         .compareTo(noteA['dateModified']);
                   });
                 }
-                return listView
-                    ? NoteListView(
-                        notes: nonTrashedNotes,
-                        title: 'Home',
+                // return listView
+                //     ? NoteListView(
+                //         notes: nonTrashedNotes,
+                //         title: 'Home',
+                //       )
+                //     : NoteGridView(
+                //         notes: nonTrashedNotes,
+                //         title: 'Home',
+                //       );
+
+                //convert the code above into two sections one for pinned notes and one for non pinned notes
+                return Column(
+                  children: [
+                    if (pinnedNotes.isNotEmpty)
+                      Flexible(
+                        child: NoteListView(
+                          notes: pinnedNotes,
+                          title: 'Pinned',
+                        ),
                       )
-                    : NoteGridView(
-                        notes: nonTrashedNotes,
-                        title: 'Home',
-                      );
+                    else
+                      const SizedBox(),
+                    nonPinnedNotes.isNotEmpty
+                        ? Flexible(
+                            child: NoteListView(
+                              notes: nonPinnedNotes,
+                              title: 'Home',
+                            ),
+                          )
+                        : const SizedBox(),
+                  ],
+                );
               }
             }
             return const Center(child: CircularProgressIndicator());

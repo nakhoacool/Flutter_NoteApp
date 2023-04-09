@@ -28,7 +28,7 @@ class _NoteWidgetState extends State<NoteWidget> {
           children: [
             if (widget.note.title.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                 child: Text(
                   widget.note.title,
                   style: const TextStyle(
@@ -38,9 +38,13 @@ class _NoteWidgetState extends State<NoteWidget> {
                   ),
                 ),
               ),
+            const Divider(
+              color: Colors.black,
+              thickness: 1,
+            ),
             if (widget.note.content.isNotEmpty)
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                 child: Text(
                   widget.note.content,
                   style: const TextStyle(color: Colors.black),

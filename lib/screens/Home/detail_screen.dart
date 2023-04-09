@@ -52,6 +52,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   id: widget.note.id,
                   title: _titleController.text,
                   trashed: false,
+                  pinned: widget.note.pinned,
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
@@ -95,6 +96,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   id: widget.note.id,
                   title: _titleController.text,
                   trashed: widget.note.trashed,
+                  pinned: widget.note.pinned,
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
@@ -125,6 +127,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   id: widget.note.id,
                   title: _titleController.text,
                   trashed: true,
+                  pinned: widget.note.pinned,
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
