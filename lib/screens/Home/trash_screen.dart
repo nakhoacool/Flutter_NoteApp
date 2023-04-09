@@ -204,7 +204,9 @@ class _TrashScreenState extends State<TrashScreen> {
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!.data() as Map<String, dynamic>;
-            final notes = data['user_notes'] as List<dynamic>;
+            final notes = data.containsKey('user_notes')
+                ? data['user_notes'] as List<dynamic>
+                : [];
             final trashedNotes =
                 notes.where((note) => note['trashed'] == true).toList();
 

@@ -54,6 +54,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                       'contentRich':
                           jsonEncode(_controller.document.toDelta().toJson()),
                       'trashed': false,
+                      'pinned': false,
                       'dateCreated': DateTime.now(),
                       'dateModified': DateTime.now(),
                     }
