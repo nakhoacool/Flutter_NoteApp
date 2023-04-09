@@ -305,7 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               notes: pinnedNotes,
                               title: 'Home',
                             ),
-                    if (nonPinnedNotes.isNotEmpty)
+                    if (nonPinnedNotes.isNotEmpty && pinnedNotes.isNotEmpty)
                       const Padding(
                         padding: EdgeInsets.all(8.0),
                         child: Text(
