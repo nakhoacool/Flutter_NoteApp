@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import '/screens/Otp/email.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import '../../../components/constants.dart';
@@ -142,8 +143,8 @@ class _SignUpFormState extends State<SignUpForm> {
                 //Sign up user
                 FirebaseAuth.instance
                     .createUserWithEmailAndPassword(
-                        email: _emailController.text,
-                        password: _passwordController.text)
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim())
                     .then((value) {
                   FirebaseFirestore.instance
                       .collection('notes')
@@ -160,8 +161,10 @@ class _SignUpFormState extends State<SignUpForm> {
                       ],
                     },
                   });
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/', (route) => false);
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const EmailScreen()));
                 }).catchError((error) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

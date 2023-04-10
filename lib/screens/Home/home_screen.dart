@@ -97,6 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontSize: 15,
                                     ),
                                   ),
+                                  Text(
+                                    'Status: ${_auth.currentUser!.emailVerified ? 'Verified' : 'Not Verified'}',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                 ],
                               );
                             }

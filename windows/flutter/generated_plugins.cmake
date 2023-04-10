@@ -4,7 +4,6 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   pasteboard
-  smart_auth
   url_launcher_windows
 )
 
