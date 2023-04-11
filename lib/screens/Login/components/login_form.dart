@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import '../../../components/constants.dart';
+import '../../Otp/forgot.dart';
 
 class LoginForm extends StatefulWidget {
   const LoginForm({
@@ -89,14 +90,23 @@ class _LoginFormState extends State<LoginForm> {
             child: ElevatedButton(
               onPressed: () {
                 if (_loginKey.currentState!.validate()) {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+                  FocusScope.of(context).unfocus();
                   FirebaseAuth.instance
                       .signInWithEmailAndPassword(
                           email: _emailController.text,
                           password: _passwordController.text)
                       .then((value) {
-                    // //go to /
                     Navigator.popUntil(context, (route) => route.isFirst);
                   }).catchError((error) {
+                    Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(error.message),
@@ -125,7 +135,12 @@ class _LoginFormState extends State<LoginForm> {
                 style: TextStyle(color: kPrimaryColor),
               ),
               GestureDetector(
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ForgotScreen()));
+                },
                 child: const Text(
                   'Reset Now',
                   style: TextStyle(

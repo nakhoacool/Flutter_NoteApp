@@ -140,6 +140,17 @@ class _SignUpFormState extends State<SignUpForm> {
           ElevatedButton(
             onPressed: () {
               if (_signUpFormKey.currentState!.validate()) {
+                //show circular progress indicator
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    });
+                //unfocus all text fields
+                FocusScope.of(context).unfocus();
                 //Sign up user
                 FirebaseAuth.instance
                     .createUserWithEmailAndPassword(
@@ -161,11 +172,15 @@ class _SignUpFormState extends State<SignUpForm> {
                       ],
                     },
                   });
+                  //close circular progress indicator
+                  Navigator.pop(context);
                   Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
                           builder: (context) => const EmailScreen()));
                 }).catchError((error) {
+                  //close circular progress indicator
+                  Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(error.message),
