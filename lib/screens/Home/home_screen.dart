@@ -150,6 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   final tags = profile['tags'] as List<dynamic>;
                   return ListView.builder(
                     shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
                     itemCount: tags.length,
                     itemBuilder: (context, index) {
                       final tag = tags[index] as String;
@@ -170,7 +171,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Settings'),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacementNamed(context, '/settings');
+              },
             ),
             ListTile(
               leading: const Icon(Icons.logout),
@@ -183,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       appBar: AppBar(
-        title: const Text('Home'),
+        title: const Text('Notes'),
         actions: [
           //Search button
           IconButton(

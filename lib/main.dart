@@ -7,13 +7,12 @@ import 'firebase_options.dart';
 import 'screens/Home/add_note.dart';
 import 'screens/Home/home_screen.dart';
 import 'screens/Home/search_note.dart';
+import 'screens/Home/settings_screen.dart';
 import 'screens/Home/trash_screen.dart';
 import 'screens/Login/login_screen.dart';
 import 'screens/Signup/signup_screen.dart';
 import 'utils/auth.dart';
 import 'utils/auth_guard.dart';
-
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,7 +66,8 @@ class MyApp extends StatelessWidget {
         if (settings.name == '/home' ||
             settings.name == '/add-note' ||
             settings.name == '/search-note' ||
-            settings.name == '/trash') {
+            settings.name == '/trash' ||
+            settings.name == '/settings') {
           return MaterialPageRoute(builder: (context) {
             return FutureBuilder<bool>(
               future: AuthGuard.isAuthenticated(),
@@ -83,6 +83,8 @@ class MyApp extends StatelessWidget {
                       return const SearchScreen();
                     case '/trash':
                       return const TrashScreen();
+                    case '/settings':
+                      return const SettingsScreen();
                     default:
                       return Container(); // Replace this with an error message or a 404 page if desired.
                   }

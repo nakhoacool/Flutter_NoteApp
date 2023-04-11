@@ -167,8 +167,6 @@ class _SignUpFormState extends State<SignUpForm> {
                       'tags': [
                         'Work',
                         'Personal',
-                        'Shopping',
-                        'Others',
                       ],
                     },
                   });
