@@ -64,6 +64,16 @@ class _SignUpFormState extends State<SignUpForm> {
                 padding: EdgeInsets.all(defaultPadding),
                 child: Icon(Icons.person),
               ),
+              filled: true,
+              fillColor: kPrimaryLightColor,
+              iconColor: kPrimaryColor,
+              prefixIconColor: kPrimaryColor,
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: defaultPadding, vertical: defaultPadding),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
           const SizedBox(height: defaultPadding),
@@ -86,6 +96,16 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Padding(
                 padding: EdgeInsets.all(defaultPadding),
                 child: Icon(Icons.mail),
+              ),
+              filled: true,
+              fillColor: kPrimaryLightColor,
+              iconColor: kPrimaryColor,
+              prefixIconColor: kPrimaryColor,
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: defaultPadding, vertical: defaultPadding),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                borderSide: BorderSide.none,
               ),
             ),
           ),
@@ -111,6 +131,16 @@ class _SignUpFormState extends State<SignUpForm> {
                   padding: EdgeInsets.all(defaultPadding),
                   child: Icon(Icons.lock),
                 ),
+                filled: true,
+                fillColor: kPrimaryLightColor,
+                iconColor: kPrimaryColor,
+                prefixIconColor: kPrimaryColor,
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: defaultPadding, vertical: defaultPadding),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
@@ -134,10 +164,27 @@ class _SignUpFormState extends State<SignUpForm> {
                 padding: EdgeInsets.all(defaultPadding),
                 child: Icon(Icons.lock),
               ),
+              filled: true,
+              fillColor: kPrimaryLightColor,
+              iconColor: kPrimaryColor,
+              prefixIconColor: kPrimaryColor,
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: defaultPadding, vertical: defaultPadding),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
           const SizedBox(height: defaultPadding),
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: kPrimaryColor,
+              shape: const StadiumBorder(),
+              maximumSize: const Size(double.infinity, 56),
+              minimumSize: const Size(double.infinity, 56),
+            ),
             onPressed: () {
               if (_signUpFormKey.currentState!.validate()) {
                 //show circular progress indicator

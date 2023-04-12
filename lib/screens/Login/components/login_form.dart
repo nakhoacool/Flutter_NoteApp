@@ -60,6 +60,16 @@ class _LoginFormState extends State<LoginForm> {
                 padding: EdgeInsets.all(defaultPadding),
                 child: Icon(Icons.person),
               ),
+              filled: true,
+              fillColor: kPrimaryLightColor,
+              iconColor: kPrimaryColor,
+              prefixIconColor: kPrimaryColor,
+              contentPadding: EdgeInsets.symmetric(
+                  horizontal: defaultPadding, vertical: defaultPadding),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
           Padding(
@@ -81,6 +91,16 @@ class _LoginFormState extends State<LoginForm> {
                   padding: EdgeInsets.all(defaultPadding),
                   child: Icon(Icons.lock),
                 ),
+                filled: true,
+                fillColor: kPrimaryLightColor,
+                iconColor: kPrimaryColor,
+                prefixIconColor: kPrimaryColor,
+                contentPadding: EdgeInsets.symmetric(
+                    horizontal: defaultPadding, vertical: defaultPadding),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30)),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
@@ -88,6 +108,13 @@ class _LoginFormState extends State<LoginForm> {
           Hero(
             tag: "login_btn",
             child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: kPrimaryColor,
+                shape: const StadiumBorder(),
+                maximumSize: const Size(double.infinity, 56),
+                minimumSize: const Size(double.infinity, 56),
+              ),
               onPressed: () {
                 if (_loginKey.currentState!.validate()) {
                   showDialog(
