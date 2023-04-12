@@ -48,6 +48,7 @@ dependencies:
   url_strategy: ^0.2.0
   file_picker: ^3.0.4
   intl: ^0.17.0
+  cached_network_image: ^3.2.3
 
 dev_dependencies:
   flutter_test:

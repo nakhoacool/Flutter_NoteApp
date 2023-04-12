@@ -56,6 +56,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
+                  tags: widget.note.tags,
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
                 );
@@ -100,6 +101,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
+                  tags: widget.note.tags,
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
                 );
@@ -131,6 +133,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
+                  tags: widget.note.tags,
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
                 );
