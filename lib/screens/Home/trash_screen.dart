@@ -126,6 +126,7 @@ class _TrashScreenState extends State<TrashScreen> {
                   final data = snapshot.data!.data() as Map<String, dynamic>;
                   final profile = data['user_profile'] as Map<String, dynamic>;
                   final tags = profile['tags'] as List<dynamic>;
+                  tags.sort();
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
@@ -152,15 +153,7 @@ class _TrashScreenState extends State<TrashScreen> {
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/settings');
               },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Sign Out'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/');
-                _auth.signOut();
-              },
-            ),
+            )
           ],
         ),
       ),

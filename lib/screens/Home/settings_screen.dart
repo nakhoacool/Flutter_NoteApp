@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../models/note.dart';
+
+import '../Otp/email.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -12,10 +13,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+  final _tagFormKey = GlobalKey<FormState>();
   final _auth = FirebaseAuth.instance;
-  final _firestore = FirebaseFirestore.instance;
   late TextEditingController _tagController;
-
 
   @override
   void initState() {
@@ -111,7 +111,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
               leading: const Icon(Icons.alarm),
               title: const Text('Reminder'),
-              onTap: () {},
+              onTap: () {
+                //TODO: add reminder screen
+              },
             ),
             ListTile(
               leading: const Icon(Icons.delete),
@@ -133,6 +135,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   final data = snapshot.data!.data() as Map<String, dynamic>;
                   final profile = data['user_profile'] as Map<String, dynamic>;
                   final tags = profile['tags'] as List<dynamic>;
+                  tags.sort();
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
@@ -159,20 +162,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onTap: () {
                 Navigator.pop(context);
               },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Sign Out'),
-              onTap: () {
-                Navigator.pushReplacementNamed(context, '/');
-                _auth.signOut();
-              },
-            ),
+            )
           ],
         ),
       ),
       appBar: AppBar(
         title: const Text('Settings'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.pushReplacementNamed(context, '/');
+              _auth.signOut();
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
       body: ListView(
         children: [
@@ -193,16 +197,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.person),
-            title: const Text('Profile'),
+            title: const Text('Verify Email'),
             onTap: () {
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (context) => const EmailScreen()));
             },
           ),
           ListTile(
             leading: const Icon(Icons.lock),
             title: const Text('Change Password'),
             onTap: () {
-              Navigator.pushNamed(context, '/change_password');
+              //TODO: add change password screen
             },
           ),
           const SizedBox(
@@ -235,26 +240,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const Center(
             child: Text(
-              'Reminder',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          ListTile(
-            leading: const Icon(Icons.alarm),
-            title: const Text('Reminder'),
-            onTap: () {},
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const Center(
-            child: Text(
               'Tags',
               style: TextStyle(
                 fontSize: 20,
@@ -275,31 +260,45 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 builder: (context) {
                   return AlertDialog(
                     title: const Text('Add Tag'),
-                    content: TextField(
-                      controller: _tagController,
-                      decoration: const InputDecoration(
-                        hintText: 'Enter tag name',
+                    content: Form(
+                      key: _tagFormKey,
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter tag name';
+                          }
+                          return null;
+                        },
+                        controller: _tagController,
+                        decoration: const InputDecoration(
+                          hintText: 'Enter tag name',
+                        ),
                       ),
                     ),
                     actions: [
                       TextButton(
                         onPressed: () {
                           Navigator.pop(context);
+                          _tagController.clear();
                         },
                         child: const Text('Cancel'),
                       ),
                       TextButton(
                         onPressed: () {
                           // add tag to database
-                          FirebaseFirestore.instance
-                              .collection('notes')
-                              .doc(_auth.currentUser!.uid)
-                              .update({
-                            'user_profile.tags': FieldValue.arrayUnion(
-                              [_tagController.text],
-                            ),
-                          });
-                          Navigator.pop(context);
+                          if (_tagFormKey.currentState!.validate()) {
+                            final tag = _tagController.text;
+                            FirebaseFirestore.instance
+                                .collection('notes')
+                                .doc(_auth.currentUser!.uid)
+                                .update({
+                              'user_profile.tags': FieldValue.arrayUnion(
+                                [tag],
+                              ),
+                            });
+                            Navigator.pop(context);
+                            _tagController.clear();
+                          }
                         },
                         child: const Text('Add'),
                       ),
@@ -317,6 +316,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasData) {
                 final tags = snapshot.data!['user_profile']['tags'];
+                //sort tags alphabetically
+                tags.sort();
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
@@ -328,22 +329,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: Text(tag),
                       onTap: () {
                         // show rename or delete tag dialog
+                        _tagController.text = tag;
                         showDialog(
                           context: context,
                           builder: (context) {
                             return AlertDialog(
                               title: const Text('Rename or Delete Tag'),
-                              content: TextField(
-                                controller: _tagController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Enter tag name',
+                              content: Form(
+                                key: _tagFormKey,
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter tag name';
+                                    }
+                                    return null;
+                                  },
+                                  controller: _tagController,
+                                  decoration: const InputDecoration(
+                                    hintText: 'Enter tag name',
+                                  ),
                                 ),
                               ),
                               actions: [
                                 TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     // delete tag
-                                    FirebaseFirestore.instance
+                                    await FirebaseFirestore.instance
                                         .collection('notes')
                                         .doc(_auth.currentUser!.uid)
                                         .update({
@@ -352,30 +363,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         [tag],
                                       ),
                                     });
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('Delete'),
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    // rename tag
-                                    final newTag = _tagController.text;
-                                    await FirebaseFirestore.instance
-                                        .collection('notes')
-                                        .doc(_auth.currentUser!.uid)
-                                        .update({
-                                      'user_profile.tags':
-                                          FieldValue.arrayRemove([tag]),
-                                    });
-                                    await FirebaseFirestore.instance
-                                        .collection('notes')
-                                        .doc(_auth.currentUser!.uid)
-                                        .update({
-                                      'user_profile.tags':
-                                          FieldValue.arrayUnion([newTag]),
-                                    });
 
-                                    // update tag in notes
+                                    // delete the corespoinding tag from notes
                                     final notesRef = FirebaseFirestore.instance
                                         .collection('notes')
                                         .doc(_auth.currentUser!.uid);
@@ -385,7 +374,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                           List<String>.from(note['tags'] ?? []);
                                       if (tagNote.contains(tag)) {
                                         tagNote.remove(tag);
-                                        tagNote.add(newTag);
                                         await notesRef.update({
                                           'user_notes':
                                               FieldValue.arrayRemove([note]),
@@ -411,6 +399,70 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                       }
                                     }
                                     Navigator.pop(context);
+                                    _tagController.clear();
+                                  },
+                                  child: const Text('Delete'),
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    // rename tag
+                                    if (_tagFormKey.currentState!.validate()) {
+                                      final newTag = _tagController.text;
+                                      await FirebaseFirestore.instance
+                                          .collection('notes')
+                                          .doc(_auth.currentUser!.uid)
+                                          .update({
+                                        'user_profile.tags':
+                                            FieldValue.arrayRemove([tag]),
+                                      });
+                                      await FirebaseFirestore.instance
+                                          .collection('notes')
+                                          .doc(_auth.currentUser!.uid)
+                                          .update({
+                                        'user_profile.tags':
+                                            FieldValue.arrayUnion([newTag]),
+                                      });
+
+                                      // update tag in notes
+                                      final notesRef = FirebaseFirestore
+                                          .instance
+                                          .collection('notes')
+                                          .doc(_auth.currentUser!.uid);
+                                      final notes = await notesRef.get();
+                                      for (var note in notes['user_notes']) {
+                                        final tagNote = List<String>.from(
+                                            note['tags'] ?? []);
+                                        if (tagNote.contains(tag)) {
+                                          tagNote.remove(tag);
+                                          tagNote.add(newTag);
+                                          await notesRef.update({
+                                            'user_notes':
+                                                FieldValue.arrayRemove([note]),
+                                          });
+                                          await notesRef.update({
+                                            'user_notes':
+                                                FieldValue.arrayUnion([
+                                              {
+                                                'id': note['id'],
+                                                'title': note['title'],
+                                                'content': note['content'],
+                                                'contentRich':
+                                                    note['contentRich'],
+                                                'trashed': note['trashed'],
+                                                'pinned': note['pinned'],
+                                                'tags': tagNote,
+                                                'dateCreated':
+                                                    note['dateCreated'],
+                                                'dateModified':
+                                                    note['dateModified'],
+                                              }
+                                            ]),
+                                          });
+                                        }
+                                      }
+                                      Navigator.pop(context);
+                                      _tagController.clear();
+                                    }
                                   },
                                   child: const Text('Rename'),
                                 ),
@@ -426,7 +478,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               return const Center(child: CircularProgressIndicator());
             },
           ),
-
           const SizedBox(
             height: 20,
           ),

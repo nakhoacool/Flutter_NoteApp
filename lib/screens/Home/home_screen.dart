@@ -149,6 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   final data = snapshot.data!.data() as Map<String, dynamic>;
                   final profile = data['user_profile'] as Map<String, dynamic>;
                   final tags = profile['tags'] as List<dynamic>;
+                  tags.sort();
                   return ListView.builder(
                     shrinkWrap: true,
                     physics: const ClampingScrollPhysics(),
@@ -175,14 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.pushReplacementNamed(context, '/settings');
               },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('Sign Out'),
-              onTap: () {
-                _auth.signOut();
-              },
-            ),
+            )
           ],
         ),
       ),
@@ -191,10 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           //Search button
           IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/search-note');
-              },
-              icon: const Icon(Icons.search)),
+            onPressed: () {
+              Navigator.pushNamed(context, '/search-note');
+            },
+            icon: const Icon(Icons.search),
+          ),
           IconButton(
             onPressed: () {
               setState(() {

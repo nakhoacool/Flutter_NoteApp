@@ -5,7 +5,7 @@ class Note {
   String title;
   String content;
   String contentRich;
-  List? tags;
+  List tags;
   bool trashed;
   bool pinned;
   DateTime dateCreated;
@@ -36,7 +36,6 @@ class Note {
         dateModified = (firestore['dateModified'] as Timestamp).toDate();
 
   //convert to firestore
-
   Map<String, dynamic> toFirestore() {
     return {
       'id': id,

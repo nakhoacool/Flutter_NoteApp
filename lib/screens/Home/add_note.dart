@@ -53,6 +53,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                       'content': _controller.document.toPlainText(),
                       'contentRich':
                           jsonEncode(_controller.document.toDelta().toJson()),
+                      //TODO: add tags picker
+                      'tags': <String>[],
                       'trashed': false,
                       'pinned': false,
                       'dateCreated': DateTime.now(),

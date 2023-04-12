@@ -46,6 +46,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         title: const Text('Note Detail'),
         actions: [
           if (widget.title == 'Trash') ...[
+            //restore note
             IconButton(
               onPressed: () {
                 final note = Note(
@@ -77,6 +78,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               },
               icon: const Icon(Icons.restore),
             ),
+            //delete permanently
             IconButton(
               onPressed: () {
                 FirebaseFirestore.instance
@@ -101,6 +103,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
+                  //TODO: add tags
                   tags: widget.note.tags,
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
