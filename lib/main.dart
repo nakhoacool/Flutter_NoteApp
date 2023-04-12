@@ -43,33 +43,35 @@ class MyApp extends StatelessWidget {
             settings.name == '/search-note' ||
             settings.name == '/trash' ||
             settings.name == '/settings') {
-          return MaterialPageRoute(builder: (context) {
-            return FutureBuilder<bool>(
-              future: AuthGuard.isAuthenticated(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!) {
-                  // User is authenticated, allow access to the route.
-                  switch (settings.name) {
-                    case '/home':
-                      return const HomeScreen();
-                    case '/add-note':
-                      return const AddNoteScreen();
-                    case '/search-note':
-                      return const SearchScreen();
-                    case '/trash':
-                      return const TrashScreen();
-                    case '/settings':
-                      return const SettingsScreen();
-                    default:
-                      return Container(); // Replace this with an error message or a 404 page if desired.
-                  }
-                } else {
-                  // User is not authenticated, redirect to the login screen.
-                  return const LoginScreen();
-                }
-              },
-            );
-          });
+          return MaterialPageRoute(
+              settings: settings,
+              builder: (context) {
+                return FutureBuilder<bool>(
+                  future: AuthGuard.isAuthenticated(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data!) {
+                      // User is authenticated, allow access to the route.
+                      switch (settings.name) {
+                        case '/home':
+                          return const HomeScreen();
+                        case '/add-note':
+                          return const AddNoteScreen();
+                        case '/search-note':
+                          return const SearchScreen();
+                        case '/trash':
+                          return const TrashScreen();
+                        case '/settings':
+                          return const SettingsScreen();
+                        default:
+                          return Container(); // Replace this with an error message or a 404 page if desired.
+                      }
+                    } else {
+                      // User is not authenticated, redirect to the login screen.
+                      return const LoginScreen();
+                    }
+                  },
+                );
+              });
         }
         // If the requested route is not in the list of routes that require authentication,
         // just return null to use the default route handling.
