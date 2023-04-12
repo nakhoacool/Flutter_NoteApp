@@ -123,6 +123,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onTap: () {
               // show add tag dialog
               showDialog(
+                barrierDismissible: false,
                 context: context,
                 builder: (context) {
                   return AlertDialog(
@@ -198,6 +199,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         // show rename or delete tag dialog
                         _tagController.text = tag;
                         showDialog(
+                          barrierDismissible: false,
                           context: context,
                           builder: (context) {
                             return AlertDialog(
@@ -218,6 +220,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 ),
                               ),
                               actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    _tagController.clear();
+                                  },
+                                  child: const Text('Cancel'),
+                                ),
                                 TextButton(
                                   onPressed: () async {
                                     // delete tag
