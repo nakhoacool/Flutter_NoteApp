@@ -51,156 +51,192 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
     super.dispose();
   }
 
+  Future<dynamic> popAlertDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (ctx) {
+          return AlertDialog(
+            title: const Text('Discard changes?'),
+            content: const Text('Changes on this note will be lost.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('No'),
+              ),
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Yes'),
+              ),
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Note Detail'),
-        actions: [
-          if (widget.title == 'Trash') ...[
-            //restore note
-            IconButton(
-              onPressed: () async {
-                final note = Note(
-                  id: widget.note.id,
-                  title: _titleController.text,
-                  trashed: false,
-                  pinned: widget.note.pinned,
-                  content: _controller.document.toPlainText(),
-                  contentRich:
-                      jsonEncode(_controller.document.toDelta().toJson()),
-                  tags: widget.note.tags,
-                  dateCreated: widget.note.dateCreated,
-                  dateModified: DateTime.now(),
-                );
-                await _firebaseService.updateNote(
-                    oldNote: widget.note, newNote: note);
-                Navigator.pop(context, 'restore');
-              },
-              icon: const Icon(Icons.restore),
-            ),
-            //delete permanently
-            IconButton(
-              onPressed: () async {
-                await _firebaseService.deleteNote(note: widget.note);
-                Navigator.pop(context, 'delete');
-              },
-              icon: const Icon(Icons.delete),
-            ),
-          ] else ...[
-            IconButton(
-              onPressed: () {
-                //update the trashed to true
-                final note = Note(
-                  id: widget.note.id,
-                  title: _titleController.text,
-                  trashed: true,
-                  pinned: widget.note.pinned,
-                  content: _controller.document.toPlainText(),
-                  contentRich:
-                      jsonEncode(_controller.document.toDelta().toJson()),
-                  tags: widget.note.tags,
-                  dateCreated: widget.note.dateCreated,
-                  dateModified: DateTime.now(),
-                );
-                _firebaseService.updateNote(
-                    oldNote: widget.note, newNote: note);
-                Navigator.pop(context, 'delete');
-              },
-              icon: const Icon(Icons.delete),
-            ),
-            IconButton(
-              onPressed: () async {
-                final note = Note(
-                  id: widget.note.id,
-                  title: _titleController.text,
-                  trashed: widget.note.trashed,
-                  pinned: widget.note.pinned,
-                  content: _controller.document.toPlainText(),
-                  contentRich:
-                      jsonEncode(_controller.document.toDelta().toJson()),
-                  tags: selectedTags,
-                  dateCreated: widget.note.dateCreated,
-                  dateModified: DateTime.now(),
-                );
-                await _firebaseService.updateNote(
-                    oldNote: widget.note, newNote: note);
-                Navigator.pop(context, 'update');
-              },
-              icon: const Icon(Icons.save),
-            ),
-          ],
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              readOnly: widget.title == 'Trash' ? true : false,
-              controller: _titleController,
-              textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Title',
-                border: InputBorder.none,
-              ),
-              minLines: 1,
-              maxLines: null,
-            ),
-            const Divider(
-              thickness: 2,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 13.0),
-              child: DropdownSearch<String>.multiSelection(
-                enabled: widget.title == 'Trash' ? false : true,
-                items: tags,
-                popupProps: const PopupPropsMultiSelection.menu(
-                  showSelectedItems: true,
-                ),
-                dropdownDecoratorProps: const DropDownDecoratorProps(
-                  dropdownSearchDecoration: InputDecoration(
-                    labelText: "Tags",
-                    hintText: "Select Tags",
-                    border: InputBorder.none,
-                  ),
-                ),
-                onChanged: (List<String> value) {
-                  selectedTags = value;
+    return WillPopScope(
+      onWillPop: () async {
+        //check if title or content or tags are changed
+        if (_titleController.text != widget.note.title ||
+            _controller.document.toPlainText() != widget.note.content ||
+            jsonEncode(_controller.document.toDelta().toJson()) !=
+                widget.note.contentRich ||
+            selectedTags != widget.note.tags) {
+          var shouldPop = await popAlertDialog(context);
+          return shouldPop ?? false;
+        } else {
+          return true;
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Note Detail'),
+          actions: [
+            if (widget.title == 'Trash') ...[
+              //restore note
+              IconButton(
+                onPressed: () async {
+                  final note = Note(
+                    id: widget.note.id,
+                    title: _titleController.text,
+                    trashed: false,
+                    pinned: widget.note.pinned,
+                    content: _controller.document.toPlainText(),
+                    contentRich:
+                        jsonEncode(_controller.document.toDelta().toJson()),
+                    tags: widget.note.tags,
+                    dateCreated: widget.note.dateCreated,
+                    dateModified: DateTime.now(),
+                  );
+                  await _firebaseService.updateNote(
+                      oldNote: widget.note, newNote: note);
+                  Navigator.pop(context, 'restore');
                 },
-                selectedItems: [...selectedTags],
+                icon: const Icon(Icons.restore),
               ),
-            ),
-            const Divider(
-              thickness: 2,
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  if (widget.title != 'Trash') ...[
-                    QuillToolbar.basic(controller: _controller),
-                    const Divider(
-                      thickness: 2,
+              //delete permanently
+              IconButton(
+                onPressed: () async {
+                  await _firebaseService.deleteNote(note: widget.note);
+                  Navigator.pop(context, 'delete');
+                },
+                icon: const Icon(Icons.delete),
+              ),
+            ] else ...[
+              IconButton(
+                onPressed: () async {
+                  //update the trashed to true
+                  final note = Note(
+                    id: widget.note.id,
+                    title: _titleController.text,
+                    trashed: true,
+                    pinned: widget.note.pinned,
+                    content: _controller.document.toPlainText(),
+                    contentRich:
+                        jsonEncode(_controller.document.toDelta().toJson()),
+                    tags: widget.note.tags,
+                    dateCreated: widget.note.dateCreated,
+                    dateModified: DateTime.now(),
+                  );
+                  await _firebaseService.updateNote(
+                      oldNote: widget.note, newNote: note);
+                  Navigator.pop(context, 'delete');
+                },
+                icon: const Icon(Icons.delete),
+              ),
+              IconButton(
+                onPressed: () async {
+                  final note = Note(
+                    id: widget.note.id,
+                    title: _titleController.text,
+                    trashed: widget.note.trashed,
+                    pinned: widget.note.pinned,
+                    content: _controller.document.toPlainText(),
+                    contentRich:
+                        jsonEncode(_controller.document.toDelta().toJson()),
+                    tags: selectedTags,
+                    dateCreated: widget.note.dateCreated,
+                    dateModified: DateTime.now(),
+                  );
+                  await _firebaseService.updateNote(
+                      oldNote: widget.note, newNote: note);
+                  Navigator.pop(context, 'update');
+                },
+                icon: const Icon(Icons.save),
+              ),
+            ],
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                readOnly: widget.title == 'Trash' ? true : false,
+                controller: _titleController,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'Title',
+                  border: InputBorder.none,
+                ),
+                minLines: 1,
+                maxLines: null,
+              ),
+              const Divider(
+                thickness: 2,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 13.0),
+                child: DropdownSearch<String>.multiSelection(
+                  enabled: widget.title == 'Trash' ? false : true,
+                  items: tags,
+                  popupProps: const PopupPropsMultiSelection.menu(
+                    showSelectedItems: true,
+                  ),
+                  dropdownDecoratorProps: const DropDownDecoratorProps(
+                    dropdownSearchDecoration: InputDecoration(
+                      labelText: "Tags",
+                      hintText: "Select Tags",
+                      border: InputBorder.none,
+                    ),
+                  ),
+                  onChanged: (List<String> value) {
+                    selectedTags = value;
+                  },
+                  selectedItems: [...selectedTags],
+                ),
+              ),
+              const Divider(
+                thickness: 2,
+              ),
+              Expanded(
+                child: Column(
+                  children: [
+                    if (widget.title != 'Trash') ...[
+                      QuillToolbar.basic(controller: _controller),
+                      const Divider(
+                        thickness: 2,
+                      ),
+                    ],
+                    QuillEditor(
+                      controller: _controller,
+                      scrollController: ScrollController(),
+                      scrollable: true,
+                      autoFocus: false,
+                      focusNode: FocusNode(),
+                      readOnly: widget.title == 'Trash' ? true : false,
+                      showCursor: widget.title == 'Trash' ? false : true,
+                      expands: false,
+                      padding: const EdgeInsets.all(16),
+                      placeholder: 'Write something...',
                     ),
                   ],
-                  QuillEditor(
-                    controller: _controller,
-                    scrollController: ScrollController(),
-                    scrollable: true,
-                    autoFocus: false,
-                    focusNode: FocusNode(),
-                    readOnly: widget.title == 'Trash' ? true : false,
-                    showCursor: widget.title == 'Trash' ? false : true,
-                    expands: false,
-                    padding: const EdgeInsets.all(16),
-                    placeholder: 'Write something...',
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
