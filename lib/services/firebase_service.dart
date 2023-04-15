@@ -78,9 +78,8 @@ class FirebaseService {
     return tagsList.cast<String>();
   }
 
-  //get selected tags of the note
-
   //add note
+  //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> addNote(
     String title,
     QuillController controller,
@@ -103,6 +102,7 @@ class FirebaseService {
     });
   }
 
+  //!KHONG CAN CHINH O DAY
   Future<void> updateNote(
       {required Note oldNote, required Note newNote}) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
@@ -113,11 +113,110 @@ class FirebaseService {
     });
   }
 
+  //!KHONG CAN CHINH O DAY
   Future<void> deleteNote({
     required Note note,
   }) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_notes': FieldValue.arrayRemove([note.toFirestore()]),
     });
+  }
+
+  //create tag
+  //!KHONG CAN CHINH O DAY
+  Future<void> createTag(String tag) async {
+    await FirebaseFirestore.instance
+        .collection('notes')
+        .doc(_auth.currentUser!.uid)
+        .update({
+      'user_profile.tags': FieldValue.arrayUnion(
+        [tag],
+      ),
+    });
+  }
+
+  //delete tag
+  Future<void> deleteTag(String tag) async {
+    await FirebaseFirestore.instance
+        .collection('notes')
+        .doc(_auth.currentUser!.uid)
+        .update({
+      'user_profile.tags': FieldValue.arrayRemove(
+        [tag],
+      ),
+    });
+    //! UPDATE
+    // delete the corespoinding tag from notes
+    final notesRef = _firestore.collection('notes').doc(_auth.currentUser!.uid);
+    final notes = await notesRef.get();
+    for (var note in notes['user_notes']) {
+      final tagNote = List<String>.from(note['tags'] ?? []);
+      if (tagNote.contains(tag)) {
+        tagNote.remove(tag);
+        await notesRef.update({
+          'user_notes': FieldValue.arrayRemove([note]),
+        });
+        await notesRef.update({
+          'user_notes': FieldValue.arrayUnion([
+            {
+              'id': note['id'],
+              'title': note['title'],
+              'content': note['content'],
+              'contentRich': note['contentRich'],
+              'trashed': note['trashed'],
+              'pinned': note['pinned'],
+              'tags': tagNote,
+              'dateCreated': note['dateCreated'],
+              'dateModified': note['dateModified'],
+            }
+          ]),
+        });
+      }
+    }
+  }
+
+  //rename tag
+  Future<void> renameTag(String tag, String newTag) async {
+    await FirebaseFirestore.instance
+        .collection('notes')
+        .doc(_auth.currentUser!.uid)
+        .update({
+      'user_profile.tags': FieldValue.arrayRemove([tag]),
+    });
+    await FirebaseFirestore.instance
+        .collection('notes')
+        .doc(_auth.currentUser!.uid)
+        .update({
+      'user_profile.tags': FieldValue.arrayUnion([newTag]),
+    });
+    //! UPDATE
+    // update tag in notes
+    final notesRef = _firestore.collection('notes').doc(_auth.currentUser!.uid);
+    final notes = await notesRef.get();
+    for (var note in notes['user_notes']) {
+      final tagNote = List<String>.from(note['tags'] ?? []);
+      if (tagNote.contains(tag)) {
+        tagNote.remove(tag);
+        tagNote.add(newTag);
+        await notesRef.update({
+          'user_notes': FieldValue.arrayRemove([note]),
+        });
+        await notesRef.update({
+          'user_notes': FieldValue.arrayUnion([
+            {
+              'id': note['id'],
+              'title': note['title'],
+              'content': note['content'],
+              'contentRich': note['contentRich'],
+              'trashed': note['trashed'],
+              'pinned': note['pinned'],
+              'tags': tagNote,
+              'dateCreated': note['dateCreated'],
+              'dateModified': note['dateModified'],
+            }
+          ]),
+        });
+      }
+    }
   }
 }

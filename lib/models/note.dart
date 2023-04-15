@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+//! THEM THUOC TINH O DAY THI QUA FIREBASE_SERVICE CAP NHAT LAI
 class Note {
   String id;
   String title;

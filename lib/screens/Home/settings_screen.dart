@@ -38,7 +38,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Settings'),
         actions: [
           IconButton(
-            onPressed: () async{
+            onPressed: () async {
               await FirebaseService().signOut();
               Navigator.pushReplacementNamed(context, '/');
             },
@@ -153,19 +153,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         child: const Text('Cancel'),
                       ),
                       TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           // add tag to database
                           if (_tagFormKey.currentState!.validate()) {
+                            FocusScope.of(context).unfocus();
                             final tag = _tagController.text;
-                            FirebaseFirestore.instance
-                                .collection('notes')
-                                .doc(_auth.currentUser!.uid)
-                                .update({
-                              'user_profile.tags': FieldValue.arrayUnion(
-                                [tag],
-                              ),
-                            });
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                            );
+                            await FirebaseService().createTag(tag);
                             Navigator.pop(context);
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Tag $tag added'),
+                              ),
+                            );
                             _tagController.clear();
                           }
                         },
@@ -248,61 +257,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                         if (_tagFormKey.currentState!
                                             .validate()) {
                                           final newTag = _tagController.text;
-                                          await FirebaseFirestore.instance
-                                              .collection('notes')
-                                              .doc(_auth.currentUser!.uid)
-                                              .update({
-                                            'user_profile.tags':
-                                                FieldValue.arrayRemove([tag]),
-                                          });
-                                          await FirebaseFirestore.instance
-                                              .collection('notes')
-                                              .doc(_auth.currentUser!.uid)
-                                              .update({
-                                            'user_profile.tags':
-                                                FieldValue.arrayUnion([newTag]),
-                                          });
-
-                                          // update tag in notes
-                                          final notesRef = FirebaseFirestore
-                                              .instance
-                                              .collection('notes')
-                                              .doc(_auth.currentUser!.uid);
-                                          final notes = await notesRef.get();
-                                          for (var note
-                                              in notes['user_notes']) {
-                                            final tagNote = List<String>.from(
-                                                note['tags'] ?? []);
-                                            if (tagNote.contains(tag)) {
-                                              tagNote.remove(tag);
-                                              tagNote.add(newTag);
-                                              await notesRef.update({
-                                                'user_notes':
-                                                    FieldValue.arrayRemove(
-                                                        [note]),
-                                              });
-                                              await notesRef.update({
-                                                'user_notes':
-                                                    FieldValue.arrayUnion([
-                                                  {
-                                                    'id': note['id'],
-                                                    'title': note['title'],
-                                                    'content': note['content'],
-                                                    'contentRich':
-                                                        note['contentRich'],
-                                                    'trashed': note['trashed'],
-                                                    'pinned': note['pinned'],
-                                                    'tags': tagNote,
-                                                    'dateCreated':
-                                                        note['dateCreated'],
-                                                    'dateModified':
-                                                        note['dateModified'],
-                                                  }
-                                                ]),
-                                              });
-                                            }
-                                          }
+                                          FocusScope.of(context).unfocus();
+                                          //show loading dialog
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return const Center(
+                                                child:
+                                                    CircularProgressIndicator(),
+                                              );
+                                            },
+                                          );
+                                          await FirebaseService()
+                                              .renameTag(tag, newTag);
                                           Navigator.pop(context);
+                                          Navigator.pop(context);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                  'Tag renamed successfully'),
+                                            ),
+                                          );
                                           _tagController.clear();
                                         }
                                       },
@@ -354,54 +331,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                     TextButton(
                                       onPressed: () async {
                                         // delete tag
-                                        await FirebaseFirestore.instance
-                                            .collection('notes')
-                                            .doc(_auth.currentUser!.uid)
-                                            .update({
-                                          'user_profile.tags':
-                                              FieldValue.arrayRemove(
-                                            [tag],
-                                          ),
-                                        });
-
-                                        // delete the corespoinding tag from notes
-                                        final notesRef = FirebaseFirestore
-                                            .instance
-                                            .collection('notes')
-                                            .doc(_auth.currentUser!.uid);
-                                        final notes = await notesRef.get();
-                                        for (var note in notes['user_notes']) {
-                                          final tagNote = List<String>.from(
-                                              note['tags'] ?? []);
-                                          if (tagNote.contains(tag)) {
-                                            tagNote.remove(tag);
-                                            await notesRef.update({
-                                              'user_notes':
-                                                  FieldValue.arrayRemove(
-                                                      [note]),
-                                            });
-                                            await notesRef.update({
-                                              'user_notes':
-                                                  FieldValue.arrayUnion([
-                                                {
-                                                  'id': note['id'],
-                                                  'title': note['title'],
-                                                  'content': note['content'],
-                                                  'contentRich':
-                                                      note['contentRich'],
-                                                  'trashed': note['trashed'],
-                                                  'pinned': note['pinned'],
-                                                  'tags': tagNote,
-                                                  'dateCreated':
-                                                      note['dateCreated'],
-                                                  'dateModified':
-                                                      note['dateModified'],
-                                                }
-                                              ]),
-                                            });
-                                          }
-                                        }
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return const Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            );
+                                          },
+                                        );
+                                        await FirebaseService().deleteTag(tag);
                                         Navigator.pop(context);
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                                'Tag deleted successfully'),
+                                          ),
+                                        );
                                         _tagController.clear();
                                       },
                                       child: const Text('Delete'),
