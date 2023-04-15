@@ -6,7 +6,10 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/note.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
+
+import '../../services/firebase_service.dart';
 
 class NoteDetailScreen extends StatefulWidget {
   final Note note;
@@ -21,6 +24,10 @@ class NoteDetailScreen extends StatefulWidget {
 class _NoteDetailScreenState extends State<NoteDetailScreen> {
   late QuillController _controller;
   late TextEditingController _titleController;
+  final FirebaseService _firebaseService = FirebaseService();
+
+  List<String> tags = <String>[];
+  List selectedTags = <String>[];
 
   @override
   void initState() {
@@ -29,6 +36,13 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
       document: Document.fromJson(jsonDecode(widget.note.contentRich)),
       selection: const TextSelection.collapsed(offset: 0),
     );
+    _firebaseService.getTags().then((value) {
+      setState(() {
+        tags = value;
+      });
+    });
+
+    selectedTags = widget.note.tags;
     super.initState();
   }
 
@@ -103,8 +117,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   content: _controller.document.toPlainText(),
                   contentRich:
                       jsonEncode(_controller.document.toDelta().toJson()),
-                  //TODO: add tags
-                  tags: widget.note.tags,
+                  tags: selectedTags,
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
                 );
@@ -176,6 +189,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               ),
               minLines: 1,
               maxLines: null,
+            ),
+            const Divider(
+              thickness: 2,
+            ),
+            DropdownSearch<String>.multiSelection(
+              items: tags,
+              popupProps: const PopupPropsMultiSelection.menu(
+                showSelectedItems: true,
+              ),
+              onChanged: (List<String> value) {
+                selectedTags = value;
+              },
+              selectedItems: [...selectedTags],
             ),
             const Divider(
               thickness: 2,
