@@ -98,12 +98,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 onPressed: () async {
                   final note = Note(
                     id: widget.note.id,
-                    title: _titleController.text,
+                    title: widget.note.title,
                     trashed: false,
                     pinned: widget.note.pinned,
-                    content: _controller.document.toPlainText(),
-                    contentRich:
-                        jsonEncode(_controller.document.toDelta().toJson()),
+                    content: widget.note.content,
+                    contentRich: widget.note.contentRich,
                     tags: widget.note.tags,
                     dateCreated: widget.note.dateCreated,
                     dateModified: DateTime.now(),
@@ -128,12 +127,11 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   //update the trashed to true
                   final note = Note(
                     id: widget.note.id,
-                    title: _titleController.text,
+                    title: widget.note.title,
                     trashed: true,
                     pinned: widget.note.pinned,
-                    content: _controller.document.toPlainText(),
-                    contentRich:
-                        jsonEncode(_controller.document.toDelta().toJson()),
+                    content: widget.note.content,
+                    contentRich: widget.note.contentRich,
                     tags: widget.note.tags,
                     dateCreated: widget.note.dateCreated,
                     dateModified: DateTime.now(),
