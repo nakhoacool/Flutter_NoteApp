@@ -76,9 +76,14 @@ class FirebaseService {
     return tagsList.cast<String>();
   }
 
+  //get selected tags of the note
+
   //add note
-  Future<void> addNote(String title, QuillController controller,
-      List<String> selectedTags) async {
+  Future<void> addNote(
+    String title,
+    QuillController controller,
+    List<String> selectedTags,
+  ) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_notes': FieldValue.arrayUnion([
         {

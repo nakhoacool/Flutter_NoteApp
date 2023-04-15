@@ -54,25 +54,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                   _controller.document.isEmpty()) {
                 Navigator.pop(context);
               } else {
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes': FieldValue.arrayUnion([
-                    {
-                      'id': const Uuid().v4(),
-                      'title': _titleController.text,
-                      'content': _controller.document.toPlainText(),
-                      'contentRich':
-                          jsonEncode(_controller.document.toDelta().toJson()),
-                      'tags': selectedTags,
-                      'trashed': false,
-                      'pinned': false,
-                      'dateCreated': DateTime.now(),
-                      'dateModified': DateTime.now(),
-                    }
-                  ]),
-                });
+                _firebaseService.addNote(
+                    _titleController.text, _controller, selectedTags);
                 Navigator.pop(context, true);
               }
             },
