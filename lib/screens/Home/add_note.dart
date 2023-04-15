@@ -7,6 +7,8 @@ import 'package:uuid/uuid.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
+import '../../services/firebase_service.dart';
+
 class AddNoteScreen extends StatefulWidget {
   const AddNoteScreen({super.key});
 
@@ -17,27 +19,19 @@ class AddNoteScreen extends StatefulWidget {
 class _AddNoteScreenState extends State<AddNoteScreen> {
   final QuillController _controller = QuillController.basic();
   late TextEditingController _titleController;
+  final FirebaseService _firebaseService = FirebaseService();
 
-  final List<String> tags = <String>[];
-  List selectedTags = <String>[];
-
-  // get tags from firestore
-  Future<void> getTags() async {
-    final tagsSnapshot = await FirebaseFirestore.instance
-        .collection('notes')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .get();
-    final tagsData = tagsSnapshot.data() as Map<String, dynamic>;
-    final tagsList = tagsData['user_profile']['tags'] as List<dynamic>;
-    for (final tag in tagsList) {
-      tags.add(tag as String);
-    }
-  }
+  List<String> tags = <String>[];
+  List<String> selectedTags = <String>[];
 
   @override
   void initState() {
     _titleController = TextEditingController();
-    getTags();
+    _firebaseService.getTags().then((value) {
+      setState(() {
+        tags = value;
+      });
+    });
     super.initState();
   }
 

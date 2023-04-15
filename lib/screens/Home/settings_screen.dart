@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/firebase_service.dart';
 import '../Otp/email.dart';
 import 'widgets/note_drawer.dart';
 
@@ -37,9 +38,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         title: const Text('Settings'),
         actions: [
           IconButton(
-            onPressed: () {
+            onPressed: () async{
+              await FirebaseService().signOut();
               Navigator.pushReplacementNamed(context, '/');
-              _auth.signOut();
             },
             icon: const Icon(Icons.logout),
           ),

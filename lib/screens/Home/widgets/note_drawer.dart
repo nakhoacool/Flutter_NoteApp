@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../../services/firebase_service.dart';
+
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({
     super.key,
@@ -38,12 +40,12 @@ class DrawerWidget extends StatelessWidget {
                   children: [
                     //use StreamBuilder to get user name, user email from user_profile
                     StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('notes')
-                          .doc(_auth.currentUser!.uid)
-                          .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                      stream: FirebaseService().getNotesStream(),
+                      builder: (
+                        context,
+                        AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>>
+                            snapshot,
+                      ) {
                         if (snapshot.hasData) {
                           final data =
                               snapshot.data!.data() as Map<String, dynamic>;
@@ -111,11 +113,11 @@ class DrawerWidget extends StatelessWidget {
             },
           ),
           StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('notes')
-                .doc(_auth.currentUser!.uid)
-                .snapshots(),
-            builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            stream: FirebaseService().getNotesStream(),
+            builder: (
+              context,
+              AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot,
+            ) {
               if (snapshot.hasData) {
                 final data = snapshot.data!.data() as Map<String, dynamic>;
                 final profile = data['user_profile'] as Map<String, dynamic>;
@@ -137,7 +139,9 @@ class DrawerWidget extends StatelessWidget {
                               return ListTile(
                                 leading: const Icon(Icons.label),
                                 title: Text(tag),
-                                onTap: () {},
+                                onTap: () {
+                                  //TODO: Navigate to tag page
+                                },
                               );
                             },
                           ),

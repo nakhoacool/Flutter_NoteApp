@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../../services/firebase_service.dart';
 import '/screens/Home/widgets/note_grid_view.dart';
 import '/screens/Home/widgets/note_list_view.dart';
 import 'widgets/note_drawer.dart';
@@ -100,11 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('notes')
-            .doc(_auth.currentUser!.uid)
-            .snapshots(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        stream: FirebaseService().getNotesStream(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!.data() as Map<String, dynamic>;
             final notes = data.containsKey('user_notes')

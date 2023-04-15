@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import '../../../components/constants.dart';
+import '../../../services/firebase_service.dart';
 import '../../Otp/forgot.dart';
 
 class LoginForm extends StatefulWidget {
@@ -115,7 +116,7 @@ class _LoginFormState extends State<LoginForm> {
                 maximumSize: const Size(double.infinity, 56),
                 minimumSize: const Size(double.infinity, 56),
               ),
-              onPressed: () {
+              onPressed: () async {
                 if (_loginKey.currentState!.validate()) {
                   showDialog(
                       barrierDismissible: false,
@@ -126,20 +127,19 @@ class _LoginFormState extends State<LoginForm> {
                         );
                       });
                   FocusScope.of(context).unfocus();
-                  FirebaseAuth.instance
-                      .signInWithEmailAndPassword(
-                          email: _emailController.text,
-                          password: _passwordController.text)
-                      .then((value) {
+                  try {
+                    await FirebaseService().signInWithEmailAndPassword(
+                        _emailController.text.trim(),
+                        _passwordController.text.trim());
                     Navigator.popUntil(context, (route) => route.isFirst);
-                  }).catchError((error) {
+                  } on FirebaseAuthException catch (e) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(error.message),
+                        content: Text(e.message!),
                       ),
                     );
-                  });
+                  }
                 }
               },
               child: Text(

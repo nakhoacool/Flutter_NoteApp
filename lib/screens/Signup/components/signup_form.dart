@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import '../../../services/firebase_service.dart';
 import '/screens/Otp/email.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
@@ -185,53 +184,43 @@ class _SignUpFormState extends State<SignUpForm> {
               maximumSize: const Size(double.infinity, 56),
               minimumSize: const Size(double.infinity, 56),
             ),
-            onPressed: () {
+            onPressed: () async {
               if (_signUpFormKey.currentState!.validate()) {
                 //show circular progress indicator
                 showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    });
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                );
                 //unfocus all text fields
                 FocusScope.of(context).unfocus();
                 //Sign up user
-                FirebaseAuth.instance
-                    .createUserWithEmailAndPassword(
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text.trim())
-                    .then((value) {
-                  FirebaseFirestore.instance
-                      .collection('notes')
-                      .doc(value.user!.uid)
-                      .set({
-                    'user_profile': {
-                      'email': value.user!.email,
-                      'name': _nameController.text,
-                      'tags': [
-                        'Work',
-                        'Personal',
-                      ],
-                    },
-                  });
-                  //close circular progress indicator
+                String? errorMessage = await FirebaseService().signUpUser(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                  name: _nameController.text,
+                );
+                if (errorMessage == null) {
+                  //close circular progress indicator and navigate to next screen
                   Navigator.pop(context);
                   Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EmailScreen()));
-                }).catchError((error) {
-                  //close circular progress indicator
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const EmailScreen()),
+                  );
+                } else {
+                  //close circular progress indicator and show error message
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(error.message),
+                      content: Text(errorMessage),
                     ),
                   );
-                });
+                }
               }
             },
             child: Text("Sign Up".toUpperCase()),
