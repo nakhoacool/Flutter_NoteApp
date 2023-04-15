@@ -5,6 +5,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/note.dart';
+
 class FirebaseService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -98,6 +100,24 @@ class FirebaseService {
           'dateModified': DateTime.now(),
         }
       ]),
+    });
+  }
+
+  Future<void> updateNote(
+      {required Note oldNote, required Note newNote}) async {
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayRemove([oldNote.toFirestore()]),
+    });
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayUnion([newNote.toFirestore()]),
+    });
+  }
+
+  Future<void> deleteNote({
+    required Note note,
+  }) async {
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayRemove([note.toFirestore()]),
     });
   }
 }

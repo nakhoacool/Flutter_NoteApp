@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../../models/note.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
 
@@ -62,7 +60,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           if (widget.title == 'Trash') ...[
             //restore note
             IconButton(
-              onPressed: () {
+              onPressed: () async {
                 final note = Note(
                   id: widget.note.id,
                   title: _titleController.text,
@@ -75,69 +73,21 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
                 );
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes':
-                      FieldValue.arrayRemove([widget.note.toFirestore()]),
-                });
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
-                });
+                await _firebaseService.updateNote(
+                    oldNote: widget.note, newNote: note);
                 Navigator.pop(context, 'restore');
               },
               icon: const Icon(Icons.restore),
             ),
             //delete permanently
             IconButton(
-              onPressed: () {
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes':
-                      FieldValue.arrayRemove([widget.note.toFirestore()]),
-                });
+              onPressed: () async {
+                await _firebaseService.deleteNote(note: widget.note);
                 Navigator.pop(context, 'delete');
               },
               icon: const Icon(Icons.delete),
             ),
           ] else ...[
-            IconButton(
-              onPressed: () {
-                final note = Note(
-                  id: widget.note.id,
-                  title: _titleController.text,
-                  trashed: widget.note.trashed,
-                  pinned: widget.note.pinned,
-                  content: _controller.document.toPlainText(),
-                  contentRich:
-                      jsonEncode(_controller.document.toDelta().toJson()),
-                  tags: selectedTags,
-                  dateCreated: widget.note.dateCreated,
-                  dateModified: DateTime.now(),
-                );
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes':
-                      FieldValue.arrayRemove([widget.note.toFirestore()]),
-                });
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
-                });
-                Navigator.pop(context, 'update');
-              },
-              icon: const Icon(Icons.save),
-            ),
             IconButton(
               onPressed: () {
                 //update the trashed to true
@@ -153,22 +103,31 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   dateCreated: widget.note.dateCreated,
                   dateModified: DateTime.now(),
                 );
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes':
-                      FieldValue.arrayRemove([widget.note.toFirestore()]),
-                });
-                FirebaseFirestore.instance
-                    .collection('notes')
-                    .doc(FirebaseAuth.instance.currentUser!.uid)
-                    .update({
-                  'user_notes': FieldValue.arrayUnion([note.toFirestore()]),
-                });
+                _firebaseService.updateNote(
+                    oldNote: widget.note, newNote: note);
                 Navigator.pop(context, 'delete');
               },
               icon: const Icon(Icons.delete),
+            ),
+            IconButton(
+              onPressed: () async {
+                final note = Note(
+                  id: widget.note.id,
+                  title: _titleController.text,
+                  trashed: widget.note.trashed,
+                  pinned: widget.note.pinned,
+                  content: _controller.document.toPlainText(),
+                  contentRich:
+                      jsonEncode(_controller.document.toDelta().toJson()),
+                  tags: selectedTags,
+                  dateCreated: widget.note.dateCreated,
+                  dateModified: DateTime.now(),
+                );
+                await _firebaseService.updateNote(
+                    oldNote: widget.note, newNote: note);
+                Navigator.pop(context, 'update');
+              },
+              icon: const Icon(Icons.save),
             ),
           ],
         ],
@@ -194,6 +153,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               thickness: 2,
             ),
             DropdownSearch<String>.multiSelection(
+              enabled: widget.title == 'Trash' ? false : true,
               items: tags,
               popupProps: const PopupPropsMultiSelection.menu(
                 showSelectedItems: true,
@@ -209,10 +169,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             Expanded(
               child: Column(
                 children: [
-                  QuillToolbar.basic(controller: _controller),
-                  const Divider(
-                    thickness: 2,
-                  ),
+                  if (widget.title != 'Trash') ...[
+                    QuillToolbar.basic(controller: _controller),
+                    const Divider(
+                      thickness: 2,
+                    ),
+                  ],
                   QuillEditor(
                     controller: _controller,
                     scrollController: ScrollController(),
