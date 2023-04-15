@@ -152,16 +152,26 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             const Divider(
               thickness: 2,
             ),
-            DropdownSearch<String>.multiSelection(
-              enabled: widget.title == 'Trash' ? false : true,
-              items: tags,
-              popupProps: const PopupPropsMultiSelection.menu(
-                showSelectedItems: true,
+            Padding(
+              padding: const EdgeInsets.only(left: 13.0),
+              child: DropdownSearch<String>.multiSelection(
+                enabled: widget.title == 'Trash' ? false : true,
+                items: tags,
+                popupProps: const PopupPropsMultiSelection.menu(
+                  showSelectedItems: true,
+                ),
+                dropdownDecoratorProps: const DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: "Tags",
+                    hintText: "Select Tags",
+                    border: InputBorder.none,
+                  ),
+                ),
+                onChanged: (List<String> value) {
+                  selectedTags = value;
+                },
+                selectedItems: [...selectedTags],
               ),
-              onChanged: (List<String> value) {
-                selectedTags = value;
-              },
-              selectedItems: [...selectedTags],
             ),
             const Divider(
               thickness: 2,

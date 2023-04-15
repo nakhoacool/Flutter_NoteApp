@@ -77,14 +77,24 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             const Divider(
               thickness: 2,
             ),
-            DropdownSearch<String>.multiSelection(
-              items: tags,
-              popupProps: const PopupPropsMultiSelection.menu(
-                showSelectedItems: true,
+            Padding(
+              padding: const EdgeInsets.only(left: 13.0),
+              child: DropdownSearch<String>.multiSelection(
+                items: tags,
+                popupProps: const PopupPropsMultiSelection.menu(
+                  showSelectedItems: true,
+                ),
+                dropdownDecoratorProps: const DropDownDecoratorProps(
+                  dropdownSearchDecoration: InputDecoration(
+                    labelText: "Tags",
+                    hintText: "Select Tags",
+                    border: InputBorder.none,
+                  ),
+                ),
+                onChanged: (List<String> value) {
+                  selectedTags = value;
+                },
               ),
-              onChanged: (List<String> value) {
-                selectedTags = value;
-              },
             ),
             const Divider(
               thickness: 2,
