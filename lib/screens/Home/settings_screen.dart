@@ -14,19 +14,30 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  final _tagFormKey = GlobalKey<FormState>();
+  final FirebaseService _firebaseService = FirebaseService();
   final _auth = FirebaseAuth.instance;
+  final _tagFormKey = GlobalKey<FormState>();
+  final _passwordFormKey = GlobalKey<FormState>();
   late TextEditingController _tagController;
+  late TextEditingController _oldPasswordController;
+  late TextEditingController _newPasswordController;
+  late TextEditingController _confirmPasswordController;
 
   @override
   void initState() {
     _tagController = TextEditingController();
+    _oldPasswordController = TextEditingController();
+    _newPasswordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
     _tagController.dispose();
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -39,7 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           IconButton(
             onPressed: () async {
-              await FirebaseService().signOut();
+              await _firebaseService.signOut();
               Navigator.pushReplacementNamed(context, '/');
             },
             icon: const Icon(Icons.logout),
@@ -63,21 +74,152 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(
             height: 20,
           ),
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Verify Email'),
-            onTap: () {
-              Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => const EmailScreen()));
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.lock),
-            title: const Text('Change Password'),
-            onTap: () {
-              //TODO: add change password screen
-            },
-          ),
+          if (_auth.currentUser!.emailVerified == false) ...[
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text('Verify Account'),
+              onTap: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const EmailScreen()));
+              },
+            ),
+          ] else ...[
+            ListTile(
+              leading: const Icon(Icons.lock),
+              title: const Text('Change Password'),
+              onTap: () {
+                //show a dialog to change password
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        'Change password for: ${_auth.currentUser!.email}',
+                        textAlign: TextAlign.center,
+                      ),
+                      content: Form(
+                        key: _passwordFormKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter old password';
+                                }
+                                return null;
+                              },
+                              controller: _oldPasswordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter old password',
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter new password';
+                                }
+                                return null;
+                              },
+                              controller: _newPasswordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter new password',
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 20,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please confirm new password';
+                                }
+                                if (value != _newPasswordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                return null;
+                              },
+                              controller: _confirmPasswordController,
+                              obscureText: true,
+                              decoration: const InputDecoration(
+                                hintText: 'Confirm new password',
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _oldPasswordController.clear();
+                            _newPasswordController.clear();
+                            _confirmPasswordController.clear();
+                          },
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () async {
+                            // change password
+                            if (_passwordFormKey.currentState!.validate()) {
+                              FocusScope.of(context).unfocus();
+                              final oldPassword = _oldPasswordController.text;
+                              final newPassword = _newPasswordController.text;
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                              );
+                              try {
+                                await _firebaseService.changePassword(
+                                    oldPassword: oldPassword,
+                                    newPassword: newPassword);
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Password changed successfully'),
+                                  ),
+                                );
+                                _oldPasswordController.clear();
+                                _newPasswordController.clear();
+                                _confirmPasswordController.clear();
+                              } catch (e) {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                                _oldPasswordController.clear();
+                                _newPasswordController.clear();
+                                _confirmPasswordController.clear();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                          child: const Text('Change'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+          ],
           const SizedBox(
             height: 20,
           ),
@@ -96,12 +238,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ListTile(
             leading: const Icon(Icons.color_lens),
             title: const Text('Change Theme'),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: const Icon(Icons.font_download),
-            title: const Text('Change Font'),
-            onTap: () {},
+            onTap: () {
+              //TODO add change theme screen
+            },
           ),
           const SizedBox(
             height: 20,
@@ -167,7 +306,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 );
                               },
                             );
-                            await FirebaseService().createTag(tag);
+                            await _firebaseService.createTag(tag);
                             Navigator.pop(context);
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(
@@ -187,10 +326,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             },
           ),
           StreamBuilder(
-            stream: FirebaseFirestore.instance
-                .collection('notes')
-                .doc(_auth.currentUser!.uid)
-                .snapshots(),
+            stream: _firebaseService.getNotesStream(),
             builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.hasData) {
                 final tags = snapshot.data!['user_profile']['tags'];
@@ -269,8 +405,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                               );
                                             },
                                           );
-                                          await FirebaseService()
-                                              .renameTag(tag, newTag);
+                                          await _firebaseService.renameTag(
+                                              tag, newTag);
                                           Navigator.pop(context);
                                           Navigator.pop(context);
                                           ScaffoldMessenger.of(context)
@@ -341,7 +477,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                             );
                                           },
                                         );
-                                        await FirebaseService().deleteTag(tag);
+                                        await _firebaseService.deleteTag(tag);
                                         Navigator.pop(context);
                                         Navigator.pop(context);
                                         ScaffoldMessenger.of(context)

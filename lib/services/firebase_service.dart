@@ -64,6 +64,24 @@ class FirebaseService {
     }
   }
 
+  //change password
+  Future<void> changePassword(
+      {required String oldPassword, required String newPassword}) async {
+    try {
+      var cred = EmailAuthProvider.credential(
+          email: _auth.currentUser!.email.toString(), password: oldPassword);
+      await _auth.currentUser!.reauthenticateWithCredential(cred);
+      await _auth.currentUser!.updatePassword(newPassword);
+    } on FirebaseAuthException catch (e) {
+      throw FirebaseAuthException(
+        code: e.code,
+        message: e.message,
+      );
+    } catch (e) {
+      throw e;
+    }
+  }
+
   //sign out
   Future<void> signOut() async {
     await _auth.signOut();
