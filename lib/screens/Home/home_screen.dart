@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //       'content': 'This is your first note',
   //        'trashed': false,
   //        'pinned': false,
+  //        'tags': ['Important'],
   //       'dateCreated': DateTime.now(),
   //       'dateModified': DateTime.now(),
   //     }

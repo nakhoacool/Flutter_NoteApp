@@ -140,7 +140,7 @@ class DrawerWidget extends StatelessWidget {
                                 leading: const Icon(Icons.label),
                                 title: Text(tag),
                                 onTap: () {
-                                  //TODO: Navigate to tag page
+                                  Navigator.pushNamed(context, '/tags/$tag');
                                 },
                               );
                             },

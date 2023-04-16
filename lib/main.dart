@@ -7,6 +7,7 @@ import 'screens/Home/add_note.dart';
 import 'screens/Home/home_screen.dart';
 import 'screens/Home/search_note.dart';
 import 'screens/Home/settings_screen.dart';
+import 'screens/Home/tag_screen.dart';
 import 'screens/Home/trash_screen.dart';
 import 'screens/Login/login_screen.dart';
 import 'screens/Signup/signup_screen.dart';
@@ -33,16 +34,34 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const MyAuth(),
-        '/login': (context) => const LoginScreen(),
-        '/signup': (context) => const SignUpScreen(),
+        '/login': (context) => FutureBuilder<bool>(
+              future: AuthGuard.isAuthenticated(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!) {
+                  return const HomeScreen();
+                } else {
+                  return const LoginScreen();
+                }
+              },
+            ),
+        '/signup': (context) => FutureBuilder<bool>(
+              future: AuthGuard.isAuthenticated(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!) {
+                  return const HomeScreen();
+                } else {
+                  return const SignUpScreen();
+                }
+              },
+            ),
       },
       onGenerateRoute: (settings) {
-        // Check if the user is authenticated before allowing access to certain routes.
         if (settings.name == '/home' ||
             settings.name == '/add-note' ||
             settings.name == '/search-note' ||
             settings.name == '/trash' ||
-            settings.name == '/settings') {
+            settings.name == '/settings' ||
+            settings.name!.startsWith('/tags/')) {
           return MaterialPageRoute(
               settings: settings,
               builder: (context) {
@@ -50,7 +69,6 @@ class MyApp extends StatelessWidget {
                   future: AuthGuard.isAuthenticated(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data!) {
-                      // User is authenticated, allow access to the route.
                       switch (settings.name) {
                         case '/home':
                           return const HomeScreen();
@@ -63,18 +81,19 @@ class MyApp extends StatelessWidget {
                         case '/settings':
                           return const SettingsScreen();
                         default:
-                          return Container(); // Replace this with an error message or a 404 page if desired.
+                          var segments = settings.name!.split('/');
+                          if (segments.length > 2 && segments[1] == 'tags') {
+                            return TagScreen(tagId: segments[2]);
+                          }
+                          return const HomeScreen();
                       }
                     } else {
-                      // User is not authenticated, redirect to the login screen.
                       return const LoginScreen();
                     }
                   },
                 );
               });
         }
-        // If the requested route is not in the list of routes that require authentication,
-        // just return null to use the default route handling.
         return null;
       },
     );
