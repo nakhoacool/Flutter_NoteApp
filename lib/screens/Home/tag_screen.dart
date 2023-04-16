@@ -27,21 +27,22 @@ class _TagScreenState extends State<TagScreen> {
         builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!.data() as Map<String, dynamic>;
-            final notes = data['user_notes'] as List<dynamic>;
-            return ListView.builder(
-              itemCount: notes.length,
-              itemBuilder: (context, index) {
-                final note = notes[index] as Map<String, dynamic>;
-                final tags = note['tags'] as List<dynamic>;
-                if (tags.contains(widget.tagId)) {
-                  return NoteGridView(
-                    notes: [note],
-                    title: widget.tagId,
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            );
+            final notes = data.containsKey('user_notes')
+                ? data['user_notes'] as List<dynamic>
+                : [];
+            final nonTrashedNotes =
+                notes.where((note) => note['trashed'] == false).toList();
+            final tagNote = nonTrashedNotes
+                .where((note) => note['tags'].contains(widget.tagId))
+                .toList();
+
+            if (tagNote.isEmpty) {
+              return const Center(
+                child: Text('No notes with this tag'),
+              );
+            } else {
+              return NoteGridView(title: 'Tag', notes: tagNote);
+            }
           } else {
             return const Center(
               child: CircularProgressIndicator(),
