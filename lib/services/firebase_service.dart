@@ -26,13 +26,10 @@ class FirebaseService {
     required String name,
   }) async {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
+      UserCredential userCredential =
+          await _auth.createUserWithEmailAndPassword(
               email: email.trim(), password: password.trim());
-      await FirebaseFirestore.instance
-          .collection('notes')
-          .doc(userCredential.user!.uid)
-          .set({
+      await _firestore.collection('notes').doc(userCredential.user!.uid).set({
         'user_profile': {
           'email': userCredential.user!.email,
           'name': name,
@@ -96,6 +93,39 @@ class FirebaseService {
     return tagsList.cast<String>();
   }
 
+  Future<void> togglePinNote(Map<String, dynamic> note) async {
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayRemove([
+        {
+          'id': note['id'],
+          'title': note['title'],
+          'content': note['content'],
+          'contentRich': note['contentRich'],
+          'trashed': note['trashed'],
+          'pinned': note['pinned'],
+          'tags': note['tags'],
+          'dateCreated': note['dateCreated'],
+          'dateModified': note['dateModified'],
+        }
+      ]),
+    });
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayUnion([
+        {
+          'id': note['id'],
+          'title': note['title'],
+          'content': note['content'],
+          'contentRich': note['contentRich'],
+          'trashed': note['trashed'],
+          'pinned': !note['pinned'],
+          'tags': note['tags'],
+          'dateCreated': note['dateCreated'],
+          'dateModified': note['dateModified'],
+        }
+      ]),
+    });
+  }
+
   //add note
   //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> addNote(
@@ -143,10 +173,7 @@ class FirebaseService {
   //create tag
   //!KHONG CAN CHINH O DAY
   Future<void> createTag(String tag) async {
-    await FirebaseFirestore.instance
-        .collection('notes')
-        .doc(_auth.currentUser!.uid)
-        .update({
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_profile.tags': FieldValue.arrayUnion(
         [tag],
       ),
@@ -155,10 +182,7 @@ class FirebaseService {
 
   //delete tag
   Future<void> deleteTag(String tag) async {
-    await FirebaseFirestore.instance
-        .collection('notes')
-        .doc(_auth.currentUser!.uid)
-        .update({
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_profile.tags': FieldValue.arrayRemove(
         [tag],
       ),
@@ -195,16 +219,10 @@ class FirebaseService {
 
   //rename tag
   Future<void> renameTag(String tag, String newTag) async {
-    await FirebaseFirestore.instance
-        .collection('notes')
-        .doc(_auth.currentUser!.uid)
-        .update({
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_profile.tags': FieldValue.arrayRemove([tag]),
     });
-    await FirebaseFirestore.instance
-        .collection('notes')
-        .doc(_auth.currentUser!.uid)
-        .update({
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_profile.tags': FieldValue.arrayUnion([newTag]),
     });
     //! UPDATE

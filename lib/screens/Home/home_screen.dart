@@ -103,7 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: StreamBuilder(
         stream: FirebaseService().getNotesStream(),
-        builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+        builder: (context,
+            AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!.data() as Map<String, dynamic>;
             final notes = data.containsKey('user_notes')
@@ -158,11 +159,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (pinnedNotes.isNotEmpty)
                     const Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Pinned',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      child: Center(
+                        child: Text(
+                          'Pinned',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -179,11 +182,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (nonPinnedNotes.isNotEmpty && pinnedNotes.isNotEmpty)
                     const Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text(
-                        'Others',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                      child: Center(
+                        child: Text(
+                          'Non-Pinned',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -271,4 +276,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
