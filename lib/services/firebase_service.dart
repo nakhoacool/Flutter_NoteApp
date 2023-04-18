@@ -93,6 +93,7 @@ class FirebaseService {
     return tagsList.cast<String>();
   }
 
+  //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> togglePinNote(Map<String, dynamic> note) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_notes': FieldValue.arrayRemove([
@@ -101,6 +102,7 @@ class FirebaseService {
           'title': note['title'],
           'content': note['content'],
           'contentRich': note['contentRich'],
+          'password': note['password'],
           'trashed': note['trashed'],
           'pinned': note['pinned'],
           'tags': note['tags'],
@@ -116,6 +118,7 @@ class FirebaseService {
           'title': note['title'],
           'content': note['content'],
           'contentRich': note['contentRich'],
+          'password': note['password'],
           'trashed': note['trashed'],
           'pinned': !note['pinned'],
           'tags': note['tags'],
@@ -140,6 +143,7 @@ class FirebaseService {
           'title': title,
           'content': controller.document.toPlainText(),
           'contentRich': jsonEncode(controller.document.toDelta().toJson()),
+          'password': '',
           'tags': selectedTags,
           'trashed': false,
           'pinned': false,
@@ -205,6 +209,7 @@ class FirebaseService {
               'title': note['title'],
               'content': note['content'],
               'contentRich': note['contentRich'],
+              'password': note['password'],
               'trashed': note['trashed'],
               'pinned': note['pinned'],
               'tags': tagNote,
@@ -244,6 +249,7 @@ class FirebaseService {
               'title': note['title'],
               'content': note['content'],
               'contentRich': note['contentRich'],
+              'password': note['password'],
               'trashed': note['trashed'],
               'pinned': note['pinned'],
               'tags': tagNote,

@@ -103,6 +103,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     pinned: widget.note.pinned,
                     content: widget.note.content,
                     contentRich: widget.note.contentRich,
+                    password: widget.note.password,
                     tags: widget.note.tags,
                     dateCreated: widget.note.dateCreated,
                     dateModified: DateTime.now(),
@@ -132,6 +133,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     pinned: widget.note.pinned,
                     content: widget.note.content,
                     contentRich: widget.note.contentRich,
+                    password: widget.note.password,
                     tags: widget.note.tags,
                     dateCreated: widget.note.dateCreated,
                     dateModified: DateTime.now(),
@@ -152,6 +154,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                     content: _controller.document.toPlainText(),
                     contentRich:
                         jsonEncode(_controller.document.toDelta().toJson()),
+                    password: widget.note.password,
                     tags: selectedTags,
                     dateCreated: widget.note.dateCreated,
                     dateModified: DateTime.now(),

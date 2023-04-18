@@ -6,6 +6,7 @@ class Note {
   String title;
   String content;
   String contentRich;
+  String password;
   List tags;
   bool trashed;
   bool pinned;
@@ -17,6 +18,7 @@ class Note {
     required this.title,
     required this.content,
     required this.contentRich,
+    required this.password,
     required this.tags,
     required this.trashed,
     required this.pinned,
@@ -30,6 +32,7 @@ class Note {
         title = firestore['title'],
         content = firestore['content'],
         contentRich = firestore['contentRich'],
+        password = firestore['password'],
         tags = firestore['tags'],
         trashed = firestore['trashed'],
         pinned = firestore['pinned'],
@@ -43,6 +46,7 @@ class Note {
       'title': title,
       'content': content,
       'contentRich': contentRich,
+      'password': password,
       'tags': tags,
       'trashed': trashed,
       'pinned': pinned,
