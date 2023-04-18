@@ -120,14 +120,15 @@ class _NoteWidgetState extends State<NoteWidget> {
           ),
         ),
       ),
-      const Positioned(
-        right: 0,
-        top: 0,
-        child: Icon(
-          Icons.lock,
-          color: Colors.red,
-        ),
-      )
+      if (widget.note.password != "")
+        const Positioned(
+          right: 0,
+          top: 0,
+          child: Icon(
+            Icons.lock,
+            color: Colors.red,
+          ),
+        )
     ]);
   }
 }

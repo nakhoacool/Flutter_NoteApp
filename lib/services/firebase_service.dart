@@ -129,6 +129,42 @@ class FirebaseService {
     });
   }
 
+  //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
+  Future<void> protectNote(Map<String, dynamic> note, String password) async {
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayRemove([
+        {
+          'id': note['id'],
+          'title': note['title'],
+          'content': note['content'],
+          'contentRich': note['contentRich'],
+          'password': note['password'],
+          'trashed': note['trashed'],
+          'pinned': note['pinned'],
+          'tags': note['tags'],
+          'dateCreated': note['dateCreated'],
+          'dateModified': note['dateModified'],
+        }
+      ]),
+    });
+    await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
+      'user_notes': FieldValue.arrayUnion([
+        {
+          'id': note['id'],
+          'title': note['title'],
+          'content': note['content'],
+          'contentRich': note['contentRich'],
+          'password': password,
+          'trashed': note['trashed'],
+          'pinned': note['pinned'],
+          'tags': note['tags'],
+          'dateCreated': note['dateCreated'],
+          'dateModified': note['dateModified'],
+        }
+      ]),
+    });
+  }
+
   //add note
   //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> addNote(
