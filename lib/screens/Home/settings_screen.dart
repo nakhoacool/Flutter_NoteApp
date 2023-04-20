@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:note_app/providers/theme_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../services/firebase_service.dart';
 import '../Otp/email.dart';
@@ -43,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       drawer: DrawerWidget(auth: _auth, title: 'Settings'),
       appBar: AppBar(
@@ -190,8 +193,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 Navigator.pop(context);
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text(
-                                        'Password changed successfully'),
+                                    content:
+                                        Text('Password changed successfully'),
                                   ),
                                 );
                                 _oldPasswordController.clear();
@@ -235,12 +238,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(
             height: 20,
           ),
+          //create a toggle button to enable/disable dark mode
           ListTile(
-            leading: const Icon(Icons.color_lens),
-            title: const Text('Change Theme'),
-            onTap: () {
-              //TODO add change theme screen
-            },
+            leading: const Icon(Icons.dark_mode),
+            title: const Text('Dark Mode'),
+            trailing: Switch(
+              value: provider.darkTheme,
+              onChanged: (value) {
+                provider.toggleTheme();
+              },
+            ),
           ),
           const SizedBox(
             height: 20,

@@ -172,18 +172,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                readOnly: widget.title == 'Trash' ? true : false,
-                controller: _titleController,
-                textInputAction: TextInputAction.next,
-                decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintText: 'Title',
-                  border: InputBorder.none,
+              Padding(
+                padding: const EdgeInsets.only(left: 13.0),
+                child: TextField(
+                  readOnly: widget.title == 'Trash' ? true : false,
+                  controller: _titleController,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    hintText: 'Title',
+                    border: InputBorder.none,
+                  ),
+                  minLines: 1,
+                  maxLines: null,
                 ),
-                minLines: 1,
-                maxLines: null,
               ),
               const Divider(
                 thickness: 2,

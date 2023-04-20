@@ -62,17 +62,18 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            TextField(
-              controller: _titleController,
-              textInputAction: TextInputAction.next,
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Title',
-                border: InputBorder.none,
+            Padding(
+              padding: const EdgeInsets.only(left: 13.0),
+              child: TextField(
+                controller: _titleController,
+                textInputAction: TextInputAction.next,
+                decoration: const InputDecoration(
+                  hintText: 'Title',
+                  border: InputBorder.none,
+                ),
+                minLines: 1,
+                maxLines: null,
               ),
-              minLines: 1,
-              maxLines: null,
             ),
             const Divider(
               thickness: 2,

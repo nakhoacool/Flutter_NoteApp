@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 import 'package:url_strategy/url_strategy.dart';
 
 import 'firebase_options.dart';
+import 'providers/theme_provider.dart';
 import 'screens/Home/add_note.dart';
 import 'screens/Home/home_screen.dart';
 import 'screens/Home/search_note.dart';
@@ -28,74 +30,81 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Note',
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const MyAuth(),
-        '/login': (context) => FutureBuilder<bool>(
-              future: AuthGuard.isAuthenticated(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!) {
-                  return const HomeScreen();
-                } else {
-                  return const LoginScreen();
-                }
-              },
-            ),
-        '/signup': (context) => FutureBuilder<bool>(
-              future: AuthGuard.isAuthenticated(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!) {
-                  return const HomeScreen();
-                } else {
-                  return const SignUpScreen();
-                }
-              },
-            ),
-      },
-      onGenerateRoute: (settings) {
-        if (settings.name == '/home' ||
-            settings.name == '/add-note' ||
-            settings.name == '/search-note' ||
-            settings.name == '/trash' ||
-            settings.name == '/settings' ||
-            settings.name!.startsWith('/tags/')) {
-          return MaterialPageRoute(
-              settings: settings,
-              builder: (context) {
-                return FutureBuilder<bool>(
+    return ChangeNotifierProvider(
+      create: (_) => ThemeProvider(),
+      child: Consumer<ThemeProvider>(builder: (context, notifier, child) {
+        return MaterialApp(
+          theme: notifier.darkTheme ? darkTheme : lightTheme,
+          debugShowCheckedModeBanner: false,
+          title: 'Flutter Note',
+          initialRoute: '/',
+          routes: {
+            '/': (context) => const MyAuth(),
+            '/login': (context) => FutureBuilder<bool>(
                   future: AuthGuard.isAuthenticated(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData && snapshot.data!) {
-                      switch (settings.name) {
-                        case '/home':
-                          return const HomeScreen();
-                        case '/add-note':
-                          return const AddNoteScreen();
-                        case '/search-note':
-                          return const SearchScreen();
-                        case '/trash':
-                          return const TrashScreen();
-                        case '/settings':
-                          return const SettingsScreen();
-                        default:
-                          var segments = settings.name!.split('/');
-                          if (segments.length > 2 && segments[1] == 'tags') {
-                            return TagScreen(tagId: segments[2]);
-                          }
-                          return const HomeScreen();
-                      }
+                      return const HomeScreen();
                     } else {
                       return const LoginScreen();
                     }
                   },
-                );
-              });
-        }
-        return null;
-      },
+                ),
+            '/signup': (context) => FutureBuilder<bool>(
+                  future: AuthGuard.isAuthenticated(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data!) {
+                      return const HomeScreen();
+                    } else {
+                      return const SignUpScreen();
+                    }
+                  },
+                ),
+          },
+          onGenerateRoute: (settings) {
+            if (settings.name == '/home' ||
+                settings.name == '/add-note' ||
+                settings.name == '/search-note' ||
+                settings.name == '/trash' ||
+                settings.name == '/settings' ||
+                settings.name!.startsWith('/tags/')) {
+              return MaterialPageRoute(
+                  settings: settings,
+                  builder: (context) {
+                    return FutureBuilder<bool>(
+                      future: AuthGuard.isAuthenticated(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData && snapshot.data!) {
+                          switch (settings.name) {
+                            case '/home':
+                              return const HomeScreen();
+                            case '/add-note':
+                              return const AddNoteScreen();
+                            case '/search-note':
+                              return const SearchScreen();
+                            case '/trash':
+                              return const TrashScreen();
+                            case '/settings':
+                              return const SettingsScreen();
+                            default:
+                              var segments = settings.name!.split('/');
+                              if (segments.length > 2 &&
+                                  segments[1] == 'tags') {
+                                return TagScreen(tagId: segments[2]);
+                              }
+                              return const HomeScreen();
+                          }
+                        } else {
+                          return const LoginScreen();
+                        }
+                      },
+                    );
+                  });
+            }
+            return null;
+          },
+        );
+      }),
     );
   }
 }

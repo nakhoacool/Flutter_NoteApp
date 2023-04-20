@@ -58,6 +58,7 @@ class _SearchScreenState extends State<SearchScreen> {
       final contentLower = element.content.toLowerCase();
       final searchLower = search.toLowerCase();
       return !element.trashed &&
+          element.password == "" &&
           (titleLower.contains(searchLower) ||
               contentLower.contains(searchLower));
     }).toList();
@@ -80,18 +81,19 @@ class _SearchScreenState extends State<SearchScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'Search',
-                      border: InputBorder.none,
-                      suffixIcon: Icon(Icons.search),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Search',
+                        border: InputBorder.none,
+                        suffixIcon: Icon(Icons.search),
+                      ),
+                      onChanged: (value) {
+                        _searchNotes();
+                      },
                     ),
-                    onChanged: (value) {
-                      _searchNotes();
-                    },
                   ),
                 ),
                 Expanded(

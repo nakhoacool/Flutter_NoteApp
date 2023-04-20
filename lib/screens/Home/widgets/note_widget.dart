@@ -19,7 +19,7 @@ class _NoteWidgetState extends State<NoteWidget> {
         child: Container(
           padding: const EdgeInsets.all(4.0),
           decoration: BoxDecoration(
-            //color: colors[widget.note.color],
+            color: Colors.yellow.shade300,
             borderRadius: const BorderRadius.all(
               Radius.circular(15.0),
             ),
@@ -45,7 +45,8 @@ class _NoteWidgetState extends State<NoteWidget> {
                 color: Colors.black,
                 thickness: 1,
               ),
-              if (widget.note.content.isNotEmpty)
+              if (widget.note.content.isNotEmpty &&
+                  widget.note.password == "") ...[
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
@@ -54,6 +55,17 @@ class _NoteWidgetState extends State<NoteWidget> {
                     style: const TextStyle(color: Colors.black),
                   ),
                 ),
+              ] else ...[
+                if (widget.note.content.isNotEmpty &&
+                    widget.note.password != "")
+                  const Padding(
+                    padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
+                    child: Text(
+                      'This note is password protected, please enter the password to view the content',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  ),
+              ],
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
