@@ -45,6 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       drawer: DrawerWidget(auth: _auth, title: 'Settings'),
       appBar: AppBar(
@@ -52,6 +53,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         actions: [
           IconButton(
             onPressed: () async {
+              if (provider.darkTheme) {
+                provider.toggleTheme();
+              }
               await _firebaseService.signOut();
               Navigator.pushReplacementNamed(context, '/');
             },
@@ -238,15 +242,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
             height: 20,
           ),
           //create a toggle button to enable/disable dark mode
-          Consumer<ThemeProvider>(builder: (context, notifier, child) {
-            return SwitchListTile(
-              title: const Text('Dark Mode'),
-              value: notifier.darkTheme,
+          ListTile(
+            leading: const Icon(Icons.dark_mode),
+            title: const Text('Dark Mode'),
+            trailing: Switch(
+              value: provider.darkTheme,
               onChanged: (value) {
-                notifier.toggleTheme();
+                provider.toggleTheme();
               },
-            );
-          }),
+            ),
+          ),
           const SizedBox(
             height: 20,
           ),
@@ -442,8 +447,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   content: RichText(
                                     text: TextSpan(
                                       text: 'Are you sure you want to delete ',
-                                      style: const TextStyle(
-                                        color: Colors.black,
+                                      style: TextStyle(
+                                        color: provider.darkTheme
+                                            ? Colors.white
+                                            : Colors.black,
                                       ),
                                       children: [
                                         TextSpan(
@@ -452,10 +459,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                             color: Colors.red,
                                           ),
                                         ),
-                                        const TextSpan(
-                                          text: '?',
+                                        TextSpan(
+                                          text: ' ?',
                                           style: TextStyle(
-                                            color: Colors.black,
+                                            color: provider.darkTheme
+                                                ? Colors.white
+                                                : Colors.black,
                                           ),
                                         ),
                                       ],
