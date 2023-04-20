@@ -6,12 +6,9 @@ ThemeData darkTheme = ThemeData.dark();
 
 class ThemeProvider extends ChangeNotifier {
   final String key = 'theme';
-  late SharedPreferences preferences;
-  late bool _darkTheme;
+  bool _darkTheme = false;
 
   ThemeProvider() {
-    _initPref();
-    _darkTheme = false;
     _getThemeFromPref();
   }
 
@@ -23,16 +20,14 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _initPref() async {
-    preferences = await SharedPreferences.getInstance();
-  }
-
   Future<void> _getThemeFromPref() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
     _darkTheme = preferences.getBool(key) ?? false;
     notifyListeners();
   }
 
   Future<void> _saveToPref() async {
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setBool(key, _darkTheme);
   }
 }

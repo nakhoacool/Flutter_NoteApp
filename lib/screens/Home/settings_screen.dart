@@ -45,7 +45,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ThemeProvider>(context);
     return Scaffold(
       drawer: DrawerWidget(auth: _auth, title: 'Settings'),
       appBar: AppBar(
@@ -239,16 +238,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
             height: 20,
           ),
           //create a toggle button to enable/disable dark mode
-          ListTile(
-            leading: const Icon(Icons.dark_mode),
-            title: const Text('Dark Mode'),
-            trailing: Switch(
-              value: provider.darkTheme,
+          Consumer<ThemeProvider>(builder: (context, notifier, child) {
+            return SwitchListTile(
+              title: const Text('Dark Mode'),
+              value: notifier.darkTheme,
               onChanged: (value) {
-                provider.toggleTheme();
+                notifier.toggleTheme();
               },
-            ),
-          ),
+            );
+          }),
           const SizedBox(
             height: 20,
           ),
