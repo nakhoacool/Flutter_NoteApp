@@ -357,11 +357,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           return [
                             const PopupMenuItem(
                               value: 'rename',
-                              child: Text('Rename'),
+                              child: ListTile(
+                                leading: Icon(Icons.edit),
+                                title: Text('Rename'),
+                              ),
                             ),
                             const PopupMenuItem(
                               value: 'delete',
-                              child: Text('Delete'),
+                              child: ListTile(
+                                leading: Icon(Icons.delete),
+                                title: Text('Delete'),
+                              ),
                             ),
                           ];
                         },

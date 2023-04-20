@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../models/note.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter_quill/flutter_quill.dart' hide Text;
@@ -165,6 +166,23 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 },
                 icon: const Icon(Icons.save),
               ),
+              PopupMenuButton(
+                itemBuilder: (context) => [
+                  const PopupMenuItem(
+                    value: "share",
+                    child: ListTile(
+                      leading: Icon(Icons.share),
+                      title: Text('Share'),
+                    ),
+                  )
+                ],
+                onSelected: (value) {
+                  if (value == 'share') {
+                    Share.share(_controller.document.toPlainText(),
+                        subject: _titleController.text);
+                  }
+                },
+              )
             ],
           ],
         ),
