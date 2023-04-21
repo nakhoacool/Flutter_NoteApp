@@ -61,8 +61,8 @@ class _NoteWidgetState extends State<NoteWidget> {
                   const Padding(
                     padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                     child: Text(
-                      'This note is password protected, please enter the password to view the content',
-                      style: TextStyle(color: Colors.black),
+                      'This note is password protected',
+                      style: TextStyle(color: Colors.red),
                     ),
                   ),
               ],
