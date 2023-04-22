@@ -66,7 +66,7 @@ class _NoteListViewState extends State<NoteListView> {
               if (result != null) {
                 messenger.showSnackBar(
                   SnackBar(
-                    content: Text('Note $result successfully'),
+                    content: Text('Note $result'),
                   ),
                 );
               }
@@ -83,7 +83,7 @@ class _NoteListViewState extends State<NoteListView> {
                   if (result != null) {
                     messenger.showSnackBar(
                       SnackBar(
-                        content: Text('Note $result successfully'),
+                        content: Text('Note $result'),
                       ),
                     );
                   }

@@ -16,20 +16,34 @@ class _NoteWidgetState extends State<NoteWidget> {
   @override
   void initState() {
     super.initState();
-    if (widget.note.reminder.isNotEmpty &&
-        DateTime.now().isBefore(DateTime.parse(widget.note.reminder))) {
-      _reminderShown = true;
-      // Schedule a callback to update the state when the reminder time is reached
-      Future.delayed(
-        DateTime.parse(widget.note.reminder).difference(DateTime.now()),
-        () {
+    _updateReminderShown();
+  }
+
+  @override
+  void didUpdateWidget(NoteWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.note != widget.note) {
+      _reminderShown = false;
+      _updateReminderShown();
+    }
+  }
+
+  void _updateReminderShown() {
+    if (widget.note.reminder.isNotEmpty && widget.note.trashed == false) {
+      final reminderTime = DateTime.parse(widget.note.reminder);
+      if (DateTime.now().isBefore(reminderTime)) {
+        // The reminder time is in the future, so set _reminderShown to true
+        _reminderShown = true;
+
+        // Schedule a callback to update the state when the reminder time is reached
+        Future.delayed(reminderTime.difference(DateTime.now()), () {
           if (mounted) {
             setState(() {
               _reminderShown = false;
             });
           }
-        },
-      );
+        });
+      }
     }
   }
 
@@ -68,7 +82,7 @@ class _NoteWidgetState extends State<NoteWidget> {
                 thickness: 1,
               ),
               if (widget.note.content.isNotEmpty &&
-                  widget.note.password == "") ...[
+                  widget.note.password.isEmpty) ...[
                 Padding(
                   padding:
                       const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
@@ -79,7 +93,7 @@ class _NoteWidgetState extends State<NoteWidget> {
                 ),
               ] else ...[
                 if (widget.note.content.isNotEmpty &&
-                    widget.note.password != "")
+                    widget.note.password.isNotEmpty)
                   const Padding(
                     padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
                     child: Text(
@@ -110,7 +124,7 @@ class _NoteWidgetState extends State<NoteWidget> {
           ),
         ),
       ),
-      if (widget.note.password != "")
+      if (widget.note.password.isNotEmpty)
         const Positioned(
           right: 0,
           top: 0,

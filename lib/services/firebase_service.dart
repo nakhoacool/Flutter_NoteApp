@@ -102,7 +102,6 @@ class FirebaseService {
     return note;
   }
 
-  //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> togglePinNote(Map<String, dynamic> note) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_notes': FieldValue.arrayRemove([
@@ -140,7 +139,6 @@ class FirebaseService {
     });
   }
 
-  //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> protectNote(Map<String, dynamic> note, String password) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_notes': FieldValue.arrayRemove([
@@ -179,7 +177,6 @@ class FirebaseService {
   }
 
   //add note
-  //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> addNote({
     required String uuid,
     required String title,
@@ -206,7 +203,6 @@ class FirebaseService {
     });
   }
 
-  //!KHONG CAN CHINH O DAY
   Future<void> updateNote(
       {required Note oldNote, required Note newNote}) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
@@ -217,7 +213,6 @@ class FirebaseService {
     });
   }
 
-  //!KHONG CAN CHINH O DAY
   Future<void> deleteNote({
     required Note note,
   }) async {
@@ -227,7 +222,6 @@ class FirebaseService {
   }
 
   //create tag
-  //!KHONG CAN CHINH O DAY
   Future<void> createTag(String tag) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_profile.tags': FieldValue.arrayUnion(
@@ -243,7 +237,6 @@ class FirebaseService {
         [tag],
       ),
     });
-    //! UPDATE
     // delete the corespoinding tag from notes
     final notesRef = _firestore.collection('notes').doc(_auth.currentUser!.uid);
     final notes = await notesRef.get();
@@ -283,7 +276,6 @@ class FirebaseService {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_profile.tags': FieldValue.arrayUnion([newTag]),
     });
-    //! UPDATE
     // update tag in notes
     final notesRef = _firestore.collection('notes').doc(_auth.currentUser!.uid);
     final notes = await notesRef.get();

@@ -71,7 +71,7 @@ class _NoteGridViewState extends State<NoteGridView> {
                 if (result != null) {
                   messenger.showSnackBar(
                     SnackBar(
-                      content: Text('Note $result successfully'),
+                      content: Text('Note $result'),
                     ),
                   );
                 }
@@ -88,7 +88,7 @@ class _NoteGridViewState extends State<NoteGridView> {
                     if (result != null) {
                       messenger.showSnackBar(
                         SnackBar(
-                          content: Text('Note $result successfully'),
+                          content: Text('Note $result'),
                         ),
                       );
                     }

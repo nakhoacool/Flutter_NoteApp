@@ -130,7 +130,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                   );
                   await _firebaseService.updateNote(
                       oldNote: widget.note, newNote: note);
-                  Navigator.pop(context, 'restore');
+                  Navigator.pop(context, 'restored');
                 },
                 icon: const Icon(Icons.restore),
               ),
@@ -138,7 +138,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               IconButton(
                 onPressed: () async {
                   await _firebaseService.deleteNote(note: widget.note);
-                  Navigator.pop(context, 'delete');
+                  Navigator.pop(context, 'deleted permanently');
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -186,7 +186,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                       oldNote: widget.note, newNote: note);
                   await notificationHelper
                       .deleteNotification(int.parse(widget.note.id));
-                  Navigator.pop(context, 'delete');
+                  Navigator.pop(context, 'deleted');
                 },
                 icon: const Icon(Icons.delete),
               ),
@@ -218,7 +218,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                         widget.note.title,
                         widget.note.content);
                   }
-                  Navigator.pop(context, 'update');
+                  Navigator.pop(context, 'updated');
                 },
                 icon: const Icon(Icons.save),
               ),
