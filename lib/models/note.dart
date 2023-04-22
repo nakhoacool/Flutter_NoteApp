@@ -10,6 +10,7 @@ class Note {
   List tags;
   bool trashed;
   bool pinned;
+  String reminder;
   DateTime dateCreated;
   DateTime dateModified;
 
@@ -22,6 +23,7 @@ class Note {
     required this.tags,
     required this.trashed,
     required this.pinned,
+    required this.reminder,
     required this.dateCreated,
     required this.dateModified,
   });
@@ -36,6 +38,7 @@ class Note {
         tags = firestore['tags'],
         trashed = firestore['trashed'],
         pinned = firestore['pinned'],
+        reminder = firestore['reminder'],
         dateCreated = (firestore['dateCreated'] as Timestamp).toDate(),
         dateModified = (firestore['dateModified'] as Timestamp).toDate();
 
@@ -50,6 +53,7 @@ class Note {
       'tags': tags,
       'trashed': trashed,
       'pinned': pinned,
+      'reminder': reminder,
       'dateCreated': dateCreated,
       'dateModified': dateModified,
     };

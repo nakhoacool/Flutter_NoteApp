@@ -11,6 +11,28 @@ class NoteWidget extends StatefulWidget {
 }
 
 class _NoteWidgetState extends State<NoteWidget> {
+  bool _reminderShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.note.reminder.isNotEmpty &&
+        DateTime.now().isBefore(DateTime.parse(widget.note.reminder))) {
+      _reminderShown = true;
+      // Schedule a callback to update the state when the reminder time is reached
+      Future.delayed(
+        DateTime.parse(widget.note.reminder).difference(DateTime.now()),
+        () {
+          if (mounted) {
+            setState(() {
+              _reminderShown = false;
+            });
+          }
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -69,6 +91,11 @@ class _NoteWidgetState extends State<NoteWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  if (_reminderShown)
+                    const Icon(
+                      Icons.notifications,
+                      color: Colors.red,
+                    ),
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
@@ -79,55 +106,6 @@ class _NoteWidgetState extends State<NoteWidget> {
                   ),
                 ],
               ),
-              //   if (widget.note.reminder != null)
-              //     if (DateTime.parse(widget.note.reminder).isBefore(DateTime.now()))
-              //       Container(
-              //         decoration: BoxDecoration(
-              //           border: Border(
-              //             top: BorderSide(
-              //               color: Colors.black,
-              //               width: 1,
-              //             ),
-              //           ),
-              //         ),
-              //         child: Row(
-              //           // crossAxisAlignment: CrossAxisAlignment.start,
-              //           mainAxisAlignment: MainAxisAlignment.center,
-              //           children: [
-              //             InkWell(
-              //               onTap: () {
-              //                 print('object');
-              //               },
-              //               child: Padding(
-              //                 padding: const EdgeInsets.all(8.0),
-              //                 child: Text(
-              //                   'Mark As Done',
-              //                   style: TextStyle(
-              //                     fontWeight: FontWeight.bold,
-              //                     color: Colors.black,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //             Theme(
-              //               data: Theme.of(context).copyWith(
-              //                 unselectedWidgetColor: Colors.black,
-              //               ),
-              //               child: Checkbox(
-              //                 onChanged: (value) async {
-              //                   widget.note.markAsDone = value.toString();
-              //                   await dbHelper.updateNote(widget.note);
-              //                   setState(() {});
-              //                 },
-              //                 value: _markAsDone,
-              //                 activeColor: Colors.black,
-              //                 hoverColor: Colors.black,
-              //                 visualDensity: VisualDensity(vertical: 2.0),
-              //               ),
-              //             )
-              //           ],
-              //         ),
-              //       ),
             ],
           ),
         ),

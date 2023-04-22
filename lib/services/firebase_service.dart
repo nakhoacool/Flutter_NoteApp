@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/note.dart';
 
@@ -93,6 +92,16 @@ class FirebaseService {
     return tagsList.cast<String>();
   }
 
+  //get note by id
+  Future<Map<String, dynamic>> getNoteById(String id) async {
+    final notesSnapshot =
+        await _firestore.collection('notes').doc(_auth.currentUser!.uid).get();
+    final notesData = notesSnapshot.data() as Map<String, dynamic>;
+    final notesList = notesData['user_notes'] as List<dynamic>;
+    final note = notesList.firstWhere((element) => element['id'] == id);
+    return note;
+  }
+
   //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
   Future<void> togglePinNote(Map<String, dynamic> note) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
@@ -106,6 +115,7 @@ class FirebaseService {
           'trashed': note['trashed'],
           'pinned': note['pinned'],
           'tags': note['tags'],
+          'reminder': note['reminder'],
           'dateCreated': note['dateCreated'],
           'dateModified': note['dateModified'],
         }
@@ -122,6 +132,7 @@ class FirebaseService {
           'trashed': note['trashed'],
           'pinned': !note['pinned'],
           'tags': note['tags'],
+          'reminder': note['reminder'],
           'dateCreated': note['dateCreated'],
           'dateModified': note['dateModified'],
         }
@@ -142,6 +153,7 @@ class FirebaseService {
           'trashed': note['trashed'],
           'pinned': note['pinned'],
           'tags': note['tags'],
+          'reminder': note['reminder'],
           'dateCreated': note['dateCreated'],
           'dateModified': note['dateModified'],
         }
@@ -158,6 +170,7 @@ class FirebaseService {
           'trashed': note['trashed'],
           'pinned': note['pinned'],
           'tags': note['tags'],
+          'reminder': note['reminder'],
           'dateCreated': note['dateCreated'],
           'dateModified': note['dateModified'],
         }
@@ -167,15 +180,17 @@ class FirebaseService {
 
   //add note
   //! THEM THUOC TINH VAO NOTE THI PHAI QUA DAY UPDATE
-  Future<void> addNote(
-    String title,
-    QuillController controller,
-    List<String> selectedTags,
-  ) async {
+  Future<void> addNote({
+    required String uuid,
+    required String title,
+    required QuillController controller,
+    required List<String> selectedTags,
+    required String reminder,
+  }) async {
     await _firestore.collection('notes').doc(_auth.currentUser!.uid).update({
       'user_notes': FieldValue.arrayUnion([
         {
-          'id': const Uuid().v4(),
+          'id': uuid,
           'title': title,
           'content': controller.document.toPlainText(),
           'contentRich': jsonEncode(controller.document.toDelta().toJson()),
@@ -183,6 +198,7 @@ class FirebaseService {
           'tags': selectedTags,
           'trashed': false,
           'pinned': false,
+          'reminder': reminder,
           'dateCreated': DateTime.now(),
           'dateModified': DateTime.now(),
         }
@@ -249,6 +265,7 @@ class FirebaseService {
               'trashed': note['trashed'],
               'pinned': note['pinned'],
               'tags': tagNote,
+              'reminder': note['reminder'],
               'dateCreated': note['dateCreated'],
               'dateModified': note['dateModified'],
             }
@@ -289,6 +306,7 @@ class FirebaseService {
               'trashed': note['trashed'],
               'pinned': note['pinned'],
               'tags': tagNote,
+              'reminder': note['reminder'],
               'dateCreated': note['dateCreated'],
               'dateModified': note['dateModified'],
             }

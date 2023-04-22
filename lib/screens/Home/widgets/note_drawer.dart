@@ -97,11 +97,6 @@ class DrawerWidget extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: const Icon(Icons.alarm),
-            title: const Text('Reminder'),
-            onTap: () {},
-          ),
-          ListTile(
             leading: const Icon(Icons.delete),
             title: const Text('Trash'),
             onTap: () {
