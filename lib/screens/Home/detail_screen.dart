@@ -94,13 +94,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             _controller.document.toPlainText() != widget.note.content ||
             jsonEncode(_controller.document.toDelta().toJson()) !=
                 widget.note.contentRich ||
-            selectedTags != widget.note.tags ||
-            _pickedDate !=
-                DateFormat('yyyy-MM-dd')
-                    .format(DateTime.parse(widget.note.reminder)) ||
-            _pickedTime !=
-                DateFormat('kk:mm')
-                    .format(DateTime.parse(widget.note.reminder))) {
+            selectedTags != widget.note.tags) {
           var shouldPop = await popAlertDialog(context);
           return shouldPop ?? false;
         } else {
