@@ -160,21 +160,31 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               //show a date time picker
               IconButton(
                 onPressed: () async {
-                  var result = await _showAddReminderDialog();
-                  if (result != null) {
-                    if (result == 'delete') {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Reminder deleted'),
-                        ),
-                      );
-                    }
-                    if (result == 'save') {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Reminder added'),
-                        ),
-                      );
+                  if (widget.note.password != '') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            'Cannot set reminder for password protected note'),
+                      ),
+                    );
+                    return;
+                  } else {
+                    var result = await _showAddReminderDialog();
+                    if (result != null) {
+                      if (result == 'delete') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Reminder deleted'),
+                          ),
+                        );
+                      }
+                      if (result == 'save') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Reminder added'),
+                          ),
+                        );
+                      }
                     }
                   }
                 },
