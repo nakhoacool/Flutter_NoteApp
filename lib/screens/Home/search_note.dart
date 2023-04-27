@@ -1,8 +1,7 @@
 import '../../models/note.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/firebase_service.dart';
 import 'detail_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -13,8 +12,7 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final _auth = FirebaseAuth.instance;
-  final _firestore = FirebaseFirestore.instance;
+  final FirebaseService _firebaseService = FirebaseService();
   final _searchController = TextEditingController();
   List<Note> _notes = [];
   List<Note> _searchResult = [];
@@ -36,10 +34,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _isLoading = true;
     });
-    final notes =
-        await _firestore.collection('notes').doc(_auth.currentUser!.uid).get();
-    final data = notes.data()!['user_notes'] as List;
-    _notes = data.map((e) => Note.fromFirestore(e)).toList();
+    _notes = await _firebaseService.getNotes();
     setState(() {
       _isLoading = false;
     });
@@ -57,10 +52,8 @@ class _SearchScreenState extends State<SearchScreen> {
       final titleLower = element.title.toLowerCase();
       final contentLower = element.content.toLowerCase();
       final searchLower = search.toLowerCase();
-      return !element.trashed &&
-          element.password == "" &&
-          (titleLower.contains(searchLower) ||
-              contentLower.contains(searchLower));
+      return titleLower.contains(searchLower) ||
+          contentLower.contains(searchLower);
     }).toList();
     setState(() {
       _searchResult = result;

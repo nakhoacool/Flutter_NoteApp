@@ -131,8 +131,28 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               //delete permanently
               IconButton(
                 onPressed: () async {
-                  await _firebaseService.deleteNote(note: widget.note);
-                  Navigator.pop(context, 'deleted permanently');
+                  String result = await showDialog(
+                    context: context,
+                    builder: (ctx) => AlertDialog(
+                      title: const Text('Delete permanently?'),
+                      content: const Text(
+                          'This note will be deleted permanently and cannot be recovered.'),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, 'cancel'),
+                          child: const Text('Cancel'),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(ctx, 'delete'),
+                          child: const Text('Delete'),
+                        ),
+                      ],
+                    ),
+                  );
+                  if (result == 'delete') {
+                    await _firebaseService.deleteNote(note: widget.note);
+                    Navigator.pop(context, 'deleted permanently');
+                  }
                 },
                 icon: const Icon(Icons.delete),
               ),

@@ -83,6 +83,15 @@ class FirebaseService {
     await _auth.signOut();
   }
 
+  //get notes
+  Future<List<Note>> getNotes() async {
+    final notesSnapshot =
+        await _firestore.collection('notes').doc(_auth.currentUser!.uid).get();
+    final notesData = notesSnapshot.data()!['user_notes'] as List;
+    final notes = notesData.map((e) => Note.fromFirestore(e)).toList();
+    return notes.where((note) => !note.trashed && note.password == "").toList();
+  }
+
   //get tags from firestore
   Future<List<String>> getTags() async {
     final tagsSnapshot =
