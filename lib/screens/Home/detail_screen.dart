@@ -374,7 +374,9 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                       onPressed: () {
                         showDatePicker(
                           context: context,
-                          initialDate: widget.note.reminder != ''
+                          initialDate: widget.note.reminder != '' &&
+                                  DateTime.now().isBefore(
+                                      DateTime.parse(widget.note.reminder))
                               ? DateTime.parse(widget.note.reminder)
                               : DateTime.now(),
                           firstDate: DateTime.now(),
