@@ -77,3 +77,7 @@
   </tr>
   
 </table>
+
+## Credit
+If you love this app, please give this project a :star2:  
+Many thanks :sparkling_heart:
