@@ -1,6 +1,6 @@
 # Note Taking App
 An app built with Flutter and Firebase for taking and managing personal notes.
-
+## Table of Contents
 - [Introduction](#introduction)
 - [Features](#features)
 - [Getting Started](#getting-started)
