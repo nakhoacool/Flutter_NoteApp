@@ -1,4 +1,17 @@
-# Note Taking App made in Flutter with Firebase 
+# Note Taking App
+An app built with Flutter and Firebase for taking and managing personal notes.
+
+- [Introduction](#introduction)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Screenshots](#screenshots)
+- [Dependencies](#dependencies)
+- [Contributing](#contributing)
+- [Credit](#credit)
+- [License](#license)
+
+## Introduction
+This Note Taking App allows users to create, edit, and organize their notes. It utilizes Flutter for the user interface and Firebase for real-time storage and synchronization of notes.
 
 ## Features
 1. *Account management*: Register account, verify account via email, login, change and restore password.
@@ -91,6 +104,13 @@ flutter run
   </tr>
   
 </table>
+
+## Dependencies
+- Flutter
+- Firebase Realtime Database
+- Firebase Authentication
+- Provider
+- ...
 
 ## Contributing
 
