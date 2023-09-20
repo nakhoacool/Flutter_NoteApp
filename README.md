@@ -13,6 +13,17 @@
 10. *Notification* Set a date and timer for a note to be notified.
 11. *Share*: Share note using any app that can share text.
 
+## Getting Started
+Fork or clone this repository or download the code and navigate to the enclosing folder inside your terminal. Then use this command to run:
+1. Install dependencies:
+```
+flutter pub get
+```
+2. Run the app:
+```
+flutter run
+```   
+
 ## Screenshots
 ### Account management Screen
 <table>
