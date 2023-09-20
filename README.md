@@ -103,3 +103,6 @@ If you'd like to contribute to this project, please follow the standard GitHub f
 ## Credit
 If you love this app, please give this project a :star2:  
 Many thanks :sparkling_heart:
+
+## License
+This project is licensed under the [MIT License](LICENSE).
